@@ -25,7 +25,7 @@ class UserValidator : Validator {
             errors.rejectValue("username", "Length", "Username is too short")
         }
 
-        if (user.username.length < 32) {
+        if (user.username.length > 32) {
             errors.rejectValue("username", "Length", "Username is too long")
         }
 

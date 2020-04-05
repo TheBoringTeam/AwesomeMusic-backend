@@ -24,21 +24,12 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
 
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
     lateinit var userDetailsService: AwesomeUserDetailsService
-
-    @Value("\${security.signing-key}")
-    private lateinit var singingKey: String
-
-    @Value("\${security.encoding-strength}")
-    private var encodingStrength: Int = 256
-
-    @Value("\${security.security-realm}")
-    private lateinit var securityRealm: String
 
 
     override fun authenticationManagerBean(): AuthenticationManager {
@@ -46,46 +37,24 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
 
-//    override fun configure(auth: AuthenticationManagerBuilder?) {
-//        auth?.userDetailsService(userDetailsService)?.passwordEncoder(passwordEncoder())
-//    }
+    override fun configure(auth: AuthenticationManagerBuilder?) {
+        auth?.userDetailsService(userDetailsService)?.passwordEncoder(passwordEncoder())
+    }
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(encodingStrength)
+        return BCryptPasswordEncoder(13)
     }
 
 
     override fun configure(http: HttpSecurity) {
-        http.httpBasic()
-                .and()
+        http.antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "api/user/hello").permitAll().anyRequest().authenticated()
-                .and().csrf().disable()
-    }
-
-
-    @Bean
-    fun accessTokenConverter(): JwtAccessTokenConverter {
-        val converter = JwtAccessTokenConverter()
-        converter.setSigningKey(singingKey)
-        return converter
-    }
-
-
-    @Bean
-    fun tokenStore(): TokenStore? {
-        return JwtTokenStore(accessTokenConverter())
-    }
-
-
-    @Bean
-    @Primary //Making this primary to avoid any accidental duplication with another token service instance of the same name
-    fun tokenServices(): DefaultTokenServices? {
-        val defaultTokenServices = DefaultTokenServices()
-        defaultTokenServices.setTokenStore(tokenStore())
-        defaultTokenServices.setSupportRefreshToken(true)
-        return defaultTokenServices
+                .antMatchers("/api/user/register", "/").permitAll()
+                .antMatchers("/api/user/hello").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable()
     }
 
 }
