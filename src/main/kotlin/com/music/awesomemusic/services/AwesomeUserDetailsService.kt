@@ -1,6 +1,8 @@
 package com.music.awesomemusic.services
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -8,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class CustomUserDetailsService : UserDetailsService {
+class AwesomeUserDetailsService : UserDetailsService {
 
     @Autowired
     lateinit var userService: UserService
@@ -18,12 +20,15 @@ class CustomUserDetailsService : UserDetailsService {
             throw UsernameNotFoundException("Username is empty")
         }
 
-        val user = userService.getUserByUsername(username)
+        val user = userService.findByUsername(username) ?: throw UsernameNotFoundException("User was not found")
 
-        if (user == null) {
-            throw UsernameNotFoundException("User was not found")
+        val authorities = arrayListOf<GrantedAuthority>()
+
+        user.roles.forEach { it ->
+            authorities.add(SimpleGrantedAuthority(it.roleName))
         }
+        val userDetails = User(user.username, user.password, authorities)
 
-        return User(user.username, user.password, arrayListOf())
+        return userDetails
     }
 }
