@@ -13,6 +13,12 @@ interface IUserRepository : CrudRepository<AwesomeUser, Long> {
     fun getAll(): List<AwesomeUser>
 
 
+    @Query("select u FROM AwesomeUser u where u.id = :id")
+    fun getById(@Param("id") id: Long): AwesomeUser?
+
+
     @Query("SELECT u FROM AwesomeUser u WHERE u.username = :username")
     fun getByUsername(@Param("username") username: String): AwesomeUser?
+
+    fun existsByUsername(username: String) : Boolean
 }
