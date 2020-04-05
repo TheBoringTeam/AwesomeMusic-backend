@@ -24,7 +24,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
 
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
@@ -53,6 +53,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/api/user/register", "/").permitAll()
                 .antMatchers("/api/user/hello").permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .formLogin()
                 .and()
                 .csrf().disable()
     }

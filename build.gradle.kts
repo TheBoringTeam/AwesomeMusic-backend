@@ -46,6 +46,8 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    //Beautiful logs Log4j !11!
+    implementation("log4j:log4j:1.2.17")
     //Some weird shit
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     // Database connection
