@@ -1,6 +1,6 @@
 package com.music.awesomemusic.services
 
-import com.music.awesomemusic.domain.dto.UserFormDto
+import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.models.AwesomeUser
 import com.music.awesomemusic.repositories.IUserRepository
 import com.music.awesomemusic.utils.errors.UsernameExists
@@ -28,7 +28,7 @@ class UserService {
         return userRepository.existsByUsername(username)
     }
 
-    fun createUser(userFormDto: UserFormDto) {
+    fun createUser(userFormDto: UserRegistrationForm) {
         if (userRepository.existsByUsername(userFormDto.username)) {
             throw UsernameExists("Provided username is already taken")
         }
