@@ -46,7 +46,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http.antMatcher("/**")
                 .authorizeRequests()
                 .antMatchers("/api/user/register", "/").permitAll()
-                .antMatchers("/api/user/hello", "/api/user/sign-in").permitAll()
+                .antMatchers("/api/user/sign-in").permitAll()
                 .anyRequest().authenticated()
 //                .and()
 //                .formLogin()

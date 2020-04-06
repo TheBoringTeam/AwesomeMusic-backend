@@ -1,12 +1,15 @@
 package com.music.awesomemusic.security
 
+import com.music.awesomemusic.controllers.UserController
+import com.music.awesomemusic.services.AwesomeUserDetailsService
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.apache.log4j.Logger
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
 import java.util.*
 import javax.annotation.PostConstruct
@@ -15,12 +18,17 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class JwtTokenProvider {
-    @Value("\${security.jwt.token.secret-key:secret}")
-    private var secretKey = "secret"
 
-    @Value("\${security.jwt.token.expire-length:3600000}")
-    private val validityInMilliseconds: Long = 3600000 // 1h    @Autowired
-    private val userDetailsService: UserDetailsService? = null
+    private val logger = Logger.getLogger(JwtTokenProvider::class.java)
+
+    @Value("\${security.jwt.token.secret-key}")
+    private lateinit var secretKey: String
+
+    @Value("\${security.jwt.token.expire-length:}")
+    private var validityInMilliseconds: Long = 3600000 * 24 * 7 // 3600000 - 1h
+
+    @Autowired
+    private lateinit var userDetailsService: AwesomeUserDetailsService
 
     @PostConstruct
     protected fun init() {
@@ -41,7 +49,7 @@ class JwtTokenProvider {
     }
 
     fun getAuthentication(token: String?): Authentication {
-        val userDetails = userDetailsService!!.loadUserByUsername(getUsername(token))
+        val userDetails = userDetailsService.loadUserByUsername(getUsername(token))
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
@@ -50,20 +58,22 @@ class JwtTokenProvider {
     }
 
     fun resolveToken(req: HttpServletRequest): String? {
-        val bearerToken = req.getHeader("Authorization")
-        return if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            bearerToken.substring(7, bearerToken.length)
+        val awesomeToken = req.getHeader("Authorization")
+        return if (awesomeToken != null && awesomeToken.startsWith("AwesomeToken ")) {
+            awesomeToken.substring(13, awesomeToken.length)
         } else null
     }
 
-    fun validateToken(token: String?): Boolean {
-        return try {
+    fun validateToken(token: String): Boolean {
+        try {
             val claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-            !claims.body.expiration.before(Date())
-        } catch (e: JwtException) {
-            throw Exception("Expired or invalid JWT token")
-        } catch (e: IllegalArgumentException) {
-            throw Exception("Expired or invalid JWT token")
+
+            if (claims.body.expiration.before(Date()))
+                return false
+
+            return true
+        } catch (e: Exception) {
+            throw e
         }
     }
 }
