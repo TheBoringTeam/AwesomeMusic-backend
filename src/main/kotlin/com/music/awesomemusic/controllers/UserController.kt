@@ -1,15 +1,20 @@
 package com.music.awesomemusic.controllers
 
-import com.music.awesomemusic.domain.dto.UserFormDto
+import com.music.awesomemusic.domain.dto.UserRegistrationForm
+import com.music.awesomemusic.domain.dto.UserSignInForm
 import com.music.awesomemusic.models.AwesomeUser
+import com.music.awesomemusic.security.JwtTokenProvider
 import com.music.awesomemusic.services.UserService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService
 import com.music.awesomemusic.utils.validators.UserValidator
 import org.apache.log4j.Logger
+import org.apache.tomcat.jni.User.username
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
@@ -24,10 +29,16 @@ class UserController {
     lateinit var userService: UserService
 
     @Autowired
+    lateinit var authenticationManager: AuthenticationManager
+
+    @Autowired
     lateinit var mapValidator: MapValidationErrorService
 
     @Autowired
     lateinit var userValidator: UserValidator
+
+    @Autowired
+    lateinit var jwtTokenProvider: JwtTokenProvider
 
     @GetMapping("/{id}")
     fun info(@PathVariable id: Long): ResponseEntity<*> {
@@ -42,9 +53,9 @@ class UserController {
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody(required = true) userFormDto: UserFormDto, bindingResult: BindingResult): ResponseEntity<*> {
+    fun register(@RequestBody(required = true) userRegistrationForm: UserRegistrationForm, bindingResult: BindingResult): ResponseEntity<*> {
         logger.debug("Start register process")
-        userValidator.validate(userFormDto, bindingResult)
+        userValidator.validate(userRegistrationForm, bindingResult)
         val errorMap = mapValidator.createErrorMap(bindingResult)
 
         if (errorMap != null) {
@@ -52,8 +63,32 @@ class UserController {
             return errorMap
         }
 
-        userService.createUser(userFormDto)
+        userService.createUser(userRegistrationForm)
         logger.debug("User was created")
         return ResponseEntity<String>(HttpStatus.CREATED)
+    }
+
+    @PostMapping("/sign-in")
+    fun signIn(@RequestBody(required = true) userSignInForm: UserSignInForm, bindingResult: BindingResult): ResponseEntity<*> {
+        logger.debug("Start sign in process")
+
+        try {
+            authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
+            // TODO : Continue here
+            val user = userService.findByUsername(userSignInForm.username)
+            if (user != null) {
+                val token = jwtTokenProvider.createToken(user.username, user.roles.map { it.roleName })
+                return ResponseEntity<String>(token, HttpStatus.OK)
+            }
+            return ResponseEntity<String>(HttpStatus.UNAUTHORIZED)
+        } catch (e: Exception) {
+            logger.error("Fuck this")
+            throw e
+        }
+    }
+
+    @GetMapping("/me")
+    fun me(): ResponseEntity<*> {
+        return ResponseEntity<String>(HttpStatus.OK)
     }
 }

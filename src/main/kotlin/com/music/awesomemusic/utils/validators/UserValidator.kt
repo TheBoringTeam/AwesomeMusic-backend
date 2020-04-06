@@ -1,7 +1,6 @@
 package com.music.awesomemusic.utils.validators
 
-import com.music.awesomemusic.domain.dto.UserFormDto
-import com.music.awesomemusic.models.AwesomeUser
+import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -17,7 +16,7 @@ class UserValidator : Validator {
 
 
     override fun validate(target: Any, errors: Errors) {
-        val user = target as UserFormDto
+        val user = target as UserRegistrationForm
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty")
 
@@ -47,7 +46,7 @@ class UserValidator : Validator {
     }
 
     override fun supports(clazz: Class<*>): Boolean {
-        return UserFormDto::class.java == clazz
+        return UserRegistrationForm::class.java == clazz
     }
 
 }
