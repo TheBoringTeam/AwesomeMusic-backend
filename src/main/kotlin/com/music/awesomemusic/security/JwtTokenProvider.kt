@@ -2,6 +2,7 @@ package com.music.awesomemusic.security
 
 import com.music.awesomemusic.controllers.UserController
 import com.music.awesomemusic.services.AwesomeUserDetailsService
+import com.music.awesomemusic.utils.errors.OutdatedTokenException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -72,8 +73,12 @@ class JwtTokenProvider {
                 return false
 
             return true
-        } catch (e: Exception) {
-            throw e
+        } catch (e: JwtException) {
+            logger.debug("Token is outdated")
+            throw JwtException("Expired or invalid JWT token")
+        }catch (e : IllegalArgumentException){
+            logger.debug("Wrong entry data for token")
+            throw Exception("Invalid JWT token")
         }
     }
 }

@@ -21,5 +21,4 @@ class JwtTokenFilter(private val jwtTokenProvider: JwtTokenProvider) : GenericFi
         }
         filterChain.doFilter(req, res)
     }
-
 }
