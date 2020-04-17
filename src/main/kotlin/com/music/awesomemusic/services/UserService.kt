@@ -40,10 +40,7 @@ class UserService {
     fun createUser(userFormDto: UserRegistrationForm) {
         try {
             logger.debug("Creating user was started")
-            if (userRepository.existsByUsername(userFormDto.username)) {
-                logger.debug("User with username ${userFormDto.username} already exists")
-                throw UsernameExistsException("Provided username is already taken")
-            }
+            // TODO: Delete validation
 
             logger.debug("Find a USER role for the current user")
             val role = roleRepository.findByRoleName("USER")
@@ -51,13 +48,14 @@ class UserService {
             val user = AwesomeUser(userFormDto.username, passwordEncoder.encode(userFormDto.password))
 
             // TODO : May be some optimization here (IDK rly)
+            // add role to new user
             val roles = user.roles as ArrayList<Role>
             if (role.isPresent) {
                 roles.add(role.get())
                 logger.debug("Role for user ${userFormDto.username} was attached")
             }
-
             user.roles = roles
+
             userRepository.save(user)
             logger.debug("User ${user.username} was successfully created")
         } catch (e: Exception) {
