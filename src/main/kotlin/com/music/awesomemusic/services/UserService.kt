@@ -5,7 +5,7 @@ import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.models.AwesomeUser
 import com.music.awesomemusic.repositories.IRoleRepository
 import com.music.awesomemusic.repositories.IUserRepository
-import com.music.awesomemusic.utils.errors.UsernameExists
+import com.music.awesomemusic.utils.errors.UsernameExistsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -42,7 +42,7 @@ class UserService {
             logger.debug("Creating user was started")
             if (userRepository.existsByUsername(userFormDto.username)) {
                 logger.debug("User with username ${userFormDto.username} already exists")
-                throw UsernameExists("Provided username is already taken")
+                throw UsernameExistsException("Provided username is already taken")
             }
 
             logger.debug("Find a USER role for the current user")

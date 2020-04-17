@@ -1,6 +1,5 @@
 package com.music.awesomemusic.security
 
-import com.music.awesomemusic.controllers.UserController
 import com.music.awesomemusic.services.AwesomeUserDetailsService
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
@@ -70,10 +69,14 @@ class JwtTokenProvider {
 
             if (claims.body.expiration.before(Date()))
                 return false
-
             return true
-        } catch (e: Exception) {
-            throw e
+        } catch (e: JwtException) {
+            //TODO : Idk why, but there are 2 requests for validate token method. Could be optimized, but not right now XD
+            logger.debug("Token is outdated")
+            return false
+        } catch (e: IllegalArgumentException) {
+            logger.debug("Wrong entry data for token")
+            return false
         }
     }
 }
