@@ -34,6 +34,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     //Security
     implementation("org.springframework.security:spring-security-core")
+    //Auth
+    implementation("org.springframework.security:spring-security-jwt:1.1.0.RELEASE")
+    implementation("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
+
+
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
 //    implementation("org.springframework.security:spring-security-config")
@@ -41,6 +46,14 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    //Tokens
+    implementation("com.auth0:java-jwt:3.10.2")
+    //Login attempts
+    implementation("com.google.guava:guava:29.0-jre")
+    //Beautiful logs Log4j !11!
+    implementation("log4j:log4j:1.2.17")
+    //Some weird shit
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     // Database connection
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
