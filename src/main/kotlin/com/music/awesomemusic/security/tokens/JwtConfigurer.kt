@@ -1,4 +1,4 @@
-package com.music.awesomemusic.security
+package com.music.awesomemusic.security.tokens
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity

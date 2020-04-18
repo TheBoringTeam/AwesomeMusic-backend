@@ -1,4 +1,4 @@
-package com.music.awesomemusic.security
+package com.music.awesomemusic.security.tokens
 
 import com.music.awesomemusic.services.AwesomeUserDetailsService
 import io.jsonwebtoken.JwtException

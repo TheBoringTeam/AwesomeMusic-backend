@@ -1,5 +1,7 @@
 package com.music.awesomemusic.security
 
+import com.music.awesomemusic.security.tokens.JwtConfigurer
+import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AwesomeUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
