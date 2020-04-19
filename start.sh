@@ -1,1 +1,1 @@
-docker-compose up &>> log.txt
+docker-compose up -d
