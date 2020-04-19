@@ -8,6 +8,8 @@ services:
       - database
     ports:
       - "80:80"
+    environment:
+      - DB_IP=database
     depends_on:
       - database
   database:
