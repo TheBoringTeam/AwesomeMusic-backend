@@ -6,12 +6,10 @@ services:
     build: ./
     links:
       - database
-    env_file:
-      - .env
+    ports:
+      - "80:80"
     environment:
       - DB_IP=database
-    ports:
-      - "8080:8080"
     depends_on:
       - database
   database:
