@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface IRoleRepository : CrudRepository<Role, Long> {
+interface IRoleRepository : CrudRepository<Role, Int> {
     fun findByRoleName(roleName: String) : Optional<Role>
 }
