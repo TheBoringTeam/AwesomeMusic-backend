@@ -1,13 +1,14 @@
 package com.music.awesomemusic.controllers
 
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
+/**
+ * Test controller. Put any test endings (not unit test!).
+ */
 @RestController
+@RequestMapping("test")
 class TestController {
-    @PostMapping("/")
+    @GetMapping("/")
     @ResponseBody
     fun home(): String? {
         return "Welcome home!"

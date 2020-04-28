@@ -8,7 +8,7 @@ import javax.persistence.*
 class Role(roleName: String, desc: String) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0
+    val id: Int = 0
 
     @Column(name = "role_name")
     var roleName: String = roleName
@@ -17,7 +17,7 @@ class Role(roleName: String, desc: String) {
     @Column(name = "description")
     var description: String = desc
 
-    // possible inverse join
+    // possible inverse join, but wdf we need this ?
 //    @ManyToMany(mappedBy = "roles")
 //    var employees:Set<AwesomeUser> = hashSetOf()
 }

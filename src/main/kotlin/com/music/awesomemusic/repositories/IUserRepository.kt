@@ -18,4 +18,6 @@ interface IUserRepository : CrudRepository<AwesomeUser, Long> {
     fun getByUsername(@Param("username") username: String): AwesomeUser?
 
     fun existsByUsername(username: String): Boolean
+
+    fun existsByEmail(email: String): Boolean
 }
