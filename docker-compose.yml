@@ -7,7 +7,7 @@ services:
     links:
       - database
     ports:
-      - "80:80"
+      - "8082:8082"
     environment:
       - DB_IP=database
     depends_on:
