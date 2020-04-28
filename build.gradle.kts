@@ -50,6 +50,8 @@ dependencies {
     implementation("com.auth0:java-jwt:3.10.2")
     //Login attempts
     implementation("com.google.guava:guava:29.0-jre")
+    //Mails
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     //Beautiful logs Log4j !11!
     implementation("log4j:log4j:1.2.17")
     //Some weird shit

@@ -47,11 +47,9 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers("/api/user/register", "/").permitAll()
+                .antMatchers("/api/user/registration", "/", "/api/user/registrationConfirm").permitAll()
                 .antMatchers("/api/user/sign-in").permitAll()
                 .anyRequest().authenticated()
-//                .and()
-//                .formLogin()
                 .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

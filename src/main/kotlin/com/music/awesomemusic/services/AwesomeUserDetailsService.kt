@@ -1,6 +1,7 @@
 package com.music.awesomemusic.services
 
 
+import com.music.awesomemusic.utils.errors.TooManyAttempts
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.GrantedAuthority
@@ -10,11 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
 
 
 @Service
-class AwesomeUserDetailsService : UserDetailsService {
+class AwesomeUserDetailsService : UserDetailsService, Serializable {
 
     private val logger = Logger.getLogger(AwesomeUserDetailsService::class.java)
 
@@ -32,9 +34,13 @@ class AwesomeUserDetailsService : UserDetailsService {
             throw UsernameNotFoundException("Username is empty")
         }
 
-        val ip = getClientIP();
+        val ip = getClientIP()
+        logger.error("Ip try to log in is $ip")
         if (loginAttemptService.isBlocked(ip)) {
-            throw RuntimeException("You’ve exceeded maximum sign in attempts. Please try again in an hour.")
+            logger.info("Ip is blocked")
+            throw TooManyAttempts("Too many unsuccessful attempts to log in. Please try later")
+        } else {
+            logger.info("Ip is fine")
         }
 
         val user = userService.findByUsername(username) ?: throw UsernameNotFoundException("User was not found")
