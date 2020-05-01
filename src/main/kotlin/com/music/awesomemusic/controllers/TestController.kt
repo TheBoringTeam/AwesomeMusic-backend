@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*
  * Test controller. Put any test endings (not unit test!).
  */
 @RestController
-@RequestMapping("test")
 class TestController {
     @GetMapping("/")
     @ResponseBody
