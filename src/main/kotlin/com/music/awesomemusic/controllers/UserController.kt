@@ -1,9 +1,10 @@
 package com.music.awesomemusic.controllers
 
+import com.music.awesomemusic.domain.AwesomeUser
 import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.domain.dto.UserSignInForm
-import com.music.awesomemusic.models.AwesomeUser
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
+import com.music.awesomemusic.services.AwesomeUserDetailsService
 import com.music.awesomemusic.services.UserService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService
 import com.music.awesomemusic.utils.errors.ErrorMapHandler
@@ -135,9 +136,13 @@ class UserController {
     @GetMapping("/me")
     fun me(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
         try {
+            val user = userService.findByUsername(userDetails.username)!!
+
             return ResponseBuilderMap()
                     .addField("username", userDetails.username)
                     .addField("is_admin", userDetails.authorities.contains(SimpleGrantedAuthority("ADMIN")))
+                    .addField("email", user.email)
+                    .addField("is_activated", user.isActivated)
                     .toJSON()
         } catch (e: Exception) {
             _logger.error("Unhandled error $e")
