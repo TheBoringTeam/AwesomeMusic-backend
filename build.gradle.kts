@@ -37,8 +37,9 @@ dependencies {
     //Auth
     implementation("org.springframework.security:spring-security-jwt:1.1.0.RELEASE")
     implementation("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
-
-
+    //Test
+    implementation("org.springframework.boot:spring-boot-starter-test:2.1.6.RELEASE")
+    //Security
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
 //    implementation("org.springframework.security:spring-security-config")

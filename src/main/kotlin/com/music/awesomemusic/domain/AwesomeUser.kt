@@ -1,5 +1,4 @@
-package com.music.awesomemusic.models
-
+package com.music.awesomemusic.domain
 
 import com.music.awesomemusic.domain.Role
 import org.hibernate.annotations.CollectionId
@@ -7,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "awesome_user")
-class AwesomeUser(
+public class AwesomeUser(
         username: String,
 
         @Column(name = "password", nullable = false)
