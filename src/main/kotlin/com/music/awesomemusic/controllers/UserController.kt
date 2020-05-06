@@ -86,7 +86,7 @@ class UserController {
         userValidator.validate(userRegistrationForm, bindingResult)
         val errorMap = mapValidator.createErrorMap(bindingResult)
 
-        // show errors if they are present
+        // show exceptions if they are present
         if (errorMap != null) {
             _logger.error("Registration validation failed")
             return errorMap
