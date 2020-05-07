@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 interface IUserRepository : CrudRepository<AwesomeUser, Long> {
@@ -15,7 +16,7 @@ interface IUserRepository : CrudRepository<AwesomeUser, Long> {
 
 
     @Query("SELECT u FROM AwesomeUser u WHERE u.username = :username")
-    fun getByUsername(@Param("username") username: String): AwesomeUser?
+    fun getByUsername(@Param("username") username: String): Optional<AwesomeUser>
 
     fun existsByUsername(username: String): Boolean
 

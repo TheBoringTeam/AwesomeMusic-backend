@@ -28,6 +28,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.context.request.WebRequest
 import java.lang.Exception
 import java.util.*
@@ -86,7 +87,7 @@ class UserController {
         userValidator.validate(userRegistrationForm, bindingResult)
         val errorMap = mapValidator.createErrorMap(bindingResult)
 
-        // show errors if they are present
+        // show exceptions if they are present
         if (errorMap != null) {
             _logger.error("Registration validation failed")
             return errorMap
@@ -110,7 +111,7 @@ class UserController {
             authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
 
             //get authenticated user
-            val user = userService.findByUsername(userSignInForm.username)!!
+            val user = userService.findByUsername(userSignInForm.username)
 
             // return token for user
             val token = jwtTokenProvider.createToken(user.username, user.roles.map { it.roleName })

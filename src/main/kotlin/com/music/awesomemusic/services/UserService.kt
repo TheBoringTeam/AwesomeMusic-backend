@@ -8,10 +8,12 @@ import com.music.awesomemusic.repositories.IRoleRepository
 import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.repositories.IUserRepository
 import com.music.awesomemusic.utils.errors.UsernameExistsException
+import javassist.NotFoundException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -32,8 +34,9 @@ class UserService {
     @Autowired
     lateinit var passwordEncoder: PasswordEncoder
 
-    fun findByUsername(username: String): AwesomeUser? {
-        return userRepository.getByUsername(username)
+    fun findByUsername(username: String): AwesomeUser {
+        //TODO: Refactor query throw part
+        return userRepository.getByUsername(username).orElseThrow { NotFoundException("User with username was not found") }
     }
 
     fun findById(id: Long): AwesomeUser? {

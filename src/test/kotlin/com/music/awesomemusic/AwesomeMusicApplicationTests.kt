@@ -1,46 +1,61 @@
-//package com.music.awesomemusic
-//
-//import com.music.awesomemusic.models.AwesomeUser
-//import com.music.awesomemusic.repositories.IUserRepository
-//import org.junit.jupiter.api.Assertions.assertEquals
-//import org.junit.jupiter.api.Assertions.assertNotNull
-//import org.junit.jupiter.api.DisplayName
-//import org.junit.jupiter.api.Test
-//import org.springframework.beans.factory.annotation.Autowired
-//import org.springframework.boot.test.context.SpringBootTest
-//import org.springframework.data.repository.findByIdOrNull
-//
-//@SpringBootTest
-//class AwesomeMusicApplicationTests {
-//
-//    @Autowired
-//    lateinit var userRepository: IUserRepository
-//
-//    @Test
-//    fun contextLoads() {
-//    }
-//
-//    @Test
-//    @DisplayName("Test that sums two numbers")
-//    fun sumTwoNumber() {
-//        val result = 6
-//        assertEquals(result,6)
-//    }
-//
-//
-//    @Test
-//    @DisplayName("Test database unique")
-//    fun checkUnique() {
-//        val allUsers = userRepository.findAll()
-//        val user = AwesomeUser("testUsername", "12125125",
-//                "test@mail.com")
-//
-//        userRepository.save(user)
-//        val oneUser = userRepository.findAll()
-//
-//        val createdUser = userRepository.findById(1)
-//        assertEquals(0, allUsers.count())
-//
-//        assertNotNull(createdUser)
-//    }
-//}
+package com.music.awesomemusic
+
+import com.music.awesomemusic.domain.AwesomeUser
+import com.music.awesomemusic.domain.dto.UserRegistrationForm
+import com.music.awesomemusic.repositories.IUserRepository
+import com.music.awesomemusic.services.UserService
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotNull
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit4.SpringRunner
+
+@SpringBootTest
+@RunWith(SpringRunner::class)
+class AwesomeMusicApplicationTests {
+
+    @Autowired
+    lateinit var userRepository: IUserRepository
+
+    @Autowired
+    lateinit var userService: UserService
+
+    @Test
+    fun contextLoads() {
+    }
+
+    @Test
+    fun sumTwoNumber() {
+        val result = 6
+        assertEquals(result, 6)
+    }
+
+
+    @Test
+    fun checkUnique() {
+        val allUsers = userRepository.findAll()
+        val user = AwesomeUser("testUsername", "12125125",
+                "test@mail.com")
+
+        userRepository.save(user)
+        val oneUser = userRepository.findAll()
+
+        val createdUser = userRepository.findById(1)
+        assertEquals(0, allUsers.count())
+
+        assertNotNull(createdUser)
+    }
+
+    @Test
+    fun checkUserCreateSuccess() {
+        val userRegistrationForm = UserRegistrationForm("test_username", "", "email")
+        val user = userService.createUser(userRegistrationForm)
+
+        val userFromDb = userRepository.getById(user.id)
+
+        assertNotNull(userFromDb)
+        assertEquals(userFromDb!!.username, user.username)
+    }
+}
