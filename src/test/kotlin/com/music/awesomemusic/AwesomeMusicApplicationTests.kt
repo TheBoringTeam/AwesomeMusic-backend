@@ -1,7 +1,9 @@
 package com.music.awesomemusic
 
 import com.music.awesomemusic.domain.AwesomeUser
+import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.repositories.IUserRepository
+import com.music.awesomemusic.services.UserService
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import org.junit.Test
@@ -17,6 +19,9 @@ class AwesomeMusicApplicationTests {
     @Autowired
     lateinit var userRepository: IUserRepository
 
+    @Autowired
+    lateinit var userService: UserService
+
     @Test
     fun contextLoads() {
     }
@@ -24,7 +29,7 @@ class AwesomeMusicApplicationTests {
     @Test
     fun sumTwoNumber() {
         val result = 6
-        assertEquals(result,6)
+        assertEquals(result, 6)
     }
 
 
@@ -41,5 +46,16 @@ class AwesomeMusicApplicationTests {
         assertEquals(0, allUsers.count())
 
         assertNotNull(createdUser)
+    }
+
+    @Test
+    fun checkUserCreateSuccess() {
+        val userRegistrationForm = UserRegistrationForm("test_username", "", "email")
+        val user = userService.createUser(userRegistrationForm)
+
+        val userFromDb = userRepository.getById(user.id)
+
+        assertNotNull(userFromDb)
+        assertEquals(userFromDb!!.username, user.username)
     }
 }
