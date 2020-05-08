@@ -1,8 +1,9 @@
 package com.music.awesomemusic.controllers
 
-import com.music.awesomemusic.domain.persistence.AwesomeUser
-import com.music.awesomemusic.domain.dto.UserRegistrationForm
-import com.music.awesomemusic.domain.dto.UserSignInForm
+
+import com.music.awesomemusic.persistence.domain.AwesomeUser
+import com.music.awesomemusic.persistence.dto.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.UserService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService

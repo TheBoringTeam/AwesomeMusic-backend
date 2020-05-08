@@ -1,6 +1,6 @@
 package com.music.awesomemusic.utils.listeners
 
-import com.music.awesomemusic.domain.persistence.AwesomeUser
+import com.music.awesomemusic.domain.domain.AwesomeUser
 import org.springframework.context.ApplicationEvent
 import java.util.*
 

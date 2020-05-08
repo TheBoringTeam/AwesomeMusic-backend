@@ -1,6 +1,6 @@
 package com.music.awesomemusic
 
-import com.music.awesomemusic.domain.persistence.AwesomeUser
+import com.music.awesomemusic.domain.domain.AwesomeUser
 import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.repositories.IUserRepository
 import com.music.awesomemusic.services.UserService

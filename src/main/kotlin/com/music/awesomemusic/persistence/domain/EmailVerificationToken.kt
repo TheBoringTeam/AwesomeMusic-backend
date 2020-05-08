@@ -1,6 +1,5 @@
-package com.music.awesomemusic.domain.persistence
+package com.music.awesomemusic.persistence.domain
 
-import com.music.awesomemusic.domain.persistence.AwesomeUser
 import java.util.*
 import javax.persistence.*
 

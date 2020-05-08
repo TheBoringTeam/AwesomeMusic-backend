@@ -1,9 +1,9 @@
 package com.music.awesomemusic.services
 
-import com.music.awesomemusic.domain.persistence.EmailVerificationToken
-import com.music.awesomemusic.domain.persistence.Role
+import com.music.awesomemusic.domain.domain.EmailVerificationToken
+import com.music.awesomemusic.domain.domain.Role
 import com.music.awesomemusic.domain.dto.UserRegistrationForm
-import com.music.awesomemusic.domain.persistence.AwesomeUser
+import com.music.awesomemusic.domain.domain.AwesomeUser
 import com.music.awesomemusic.repositories.IRoleRepository
 import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.repositories.IUserRepository
