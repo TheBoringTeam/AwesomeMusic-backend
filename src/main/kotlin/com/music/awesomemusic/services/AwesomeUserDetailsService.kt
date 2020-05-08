@@ -1,7 +1,7 @@
 package com.music.awesomemusic.services
 
 
-import com.music.awesomemusic.utils.errors.TooManyAttemptsException
+import com.music.awesomemusic.utils.exceptions.user.TooManyAttemptsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.GrantedAuthority

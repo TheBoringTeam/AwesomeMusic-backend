@@ -7,8 +7,6 @@ import com.music.awesomemusic.persistence.dto.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.UserService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService
-import com.music.awesomemusic.utils.errors.ErrorMapHandler
-import com.music.awesomemusic.utils.errors.TooManyAttemptsException
 import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
 import com.music.awesomemusic.utils.validators.UserValidator
@@ -20,7 +18,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -28,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
-import java.lang.Exception
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
@@ -118,19 +114,14 @@ class UserController {
 
     @GetMapping("/me")
     fun me(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
-        try {
-            val user = userService.findByUsername(userDetails.username)!!
+        val user = userService.findByUsername(userDetails.username)
 
-            return ResponseBuilderMap()
-                    .addField("username", userDetails.username)
-                    .addField("is_admin", userDetails.authorities.contains(SimpleGrantedAuthority("ADMIN")))
-                    .addField("email", user.email)
-                    .addField("is_activated", user.isActivated)
-                    .toJSON()
-        } catch (e: Exception) {
-            _logger.error("Unhandled error $e")
-            return ErrorMapHandler().addToErrorMap(e.message).errorToJSON(HttpStatus.INTERNAL_SERVER_ERROR)
-        }
+        return ResponseBuilderMap()
+                .addField("username", userDetails.username)
+                .addField("is_admin", userDetails.authorities.contains(SimpleGrantedAuthority("ADMIN")))
+                .addField("email", user.email)
+                .addField("is_activated", user.isActivated)
+                .toJSON()
     }
 
     @GetMapping("/registrationConfirm")
