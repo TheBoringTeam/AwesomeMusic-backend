@@ -8,7 +8,7 @@ import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.UserService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService
 import com.music.awesomemusic.utils.errors.ErrorMapHandler
-import com.music.awesomemusic.utils.errors.TooManyAttempts
+import com.music.awesomemusic.utils.errors.TooManyAttemptsException
 import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
 import com.music.awesomemusic.utils.validators.UserValidator
@@ -103,32 +103,17 @@ class UserController {
     @PostMapping("/sign-in")
     fun signIn(@RequestBody(required = true) userSignInForm: UserSignInForm, bindingResult: BindingResult): ResponseEntity<*> {
         _logger.debug("Start sign in process")
-        try {
-            // authenticate user
-            authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
 
-            //get authenticated user
-            val user = userService.findByUsername(userSignInForm.username)
+        // authenticate user
+        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
 
-            // return token for user
-            val token = jwtTokenProvider.createToken(user.username, user.roles.map { it.roleName })
-            return ResponseBuilderMap().addField("token", token).toJSON()
-        } catch (e: TooManyAttempts) {
-            _logger.info("Block ip for too many attempts")
+        //get authenticated user
+        val user = userService.findByUsername(userSignInForm.username)
 
-            val errorMap = ErrorMapHandler().addToErrorMap(e.message)
-            return errorMap.errorToJSON(HttpStatus.TOO_MANY_REQUESTS)
-        } catch (e: BadCredentialsException) {
-            _logger.info("Bad credentials")
+        // return token for user
+        val token = jwtTokenProvider.createToken(user.username, user.roles.map { it.roleName })
+        return ResponseBuilderMap().addField("token", token).toJSON()
 
-            val errorMap = ErrorMapHandler().addToErrorMap(e.message)
-            return errorMap.errorToJSON(HttpStatus.UNAUTHORIZED)
-        } catch (e: Exception) {
-            _logger.error("Unhandled exception")
-
-            val errorMap = ErrorMapHandler().addToErrorMap(e.message)
-            return errorMap.errorToJSON(HttpStatus.INTERNAL_SERVER_ERROR)
-        }
     }
 
     @GetMapping("/me")

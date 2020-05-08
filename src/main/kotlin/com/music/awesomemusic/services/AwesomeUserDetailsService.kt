@@ -1,7 +1,7 @@
 package com.music.awesomemusic.services
 
 
-import com.music.awesomemusic.utils.errors.TooManyAttempts
+import com.music.awesomemusic.utils.errors.TooManyAttemptsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.GrantedAuthority
@@ -38,7 +38,7 @@ class AwesomeUserDetailsService : UserDetailsService, Serializable {
         logger.error("Ip try to log in is $ip")
         if (loginAttemptService.isBlocked(ip)) {
             logger.info("Ip is blocked")
-            throw TooManyAttempts("Too many unsuccessful attempts to log in. Please try later")
+            throw TooManyAttemptsException("Too many unsuccessful attempts to log in. Please try later")
         } else {
             logger.info("Ip is fine")
         }

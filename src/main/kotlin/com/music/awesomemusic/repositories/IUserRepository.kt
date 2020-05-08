@@ -1,6 +1,6 @@
 package com.music.awesomemusic.repositories
 
-import com.music.awesomemusic.domain.domain.AwesomeUser
+import com.music.awesomemusic.persistence.domain.AwesomeUser
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param

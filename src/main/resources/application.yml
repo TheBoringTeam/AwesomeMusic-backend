@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+---
+
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/awusic
+    password: 1257
+    username: holker
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: boring.team.official@gmail.com
+    password: vfloxemtxrlpasri
+server:
+  port: 8080
+
+awemusic:
+  ip: localhost
+
+security:
+  jwt:
+    token:
+      secret-key: secretAwesomeMusic
+      expire-length: 3600000
+    attempts:
+      max-amount-attempts: 10
+
+---
+
+spring:
+  profiles: prd
+server:
+  port: 8082

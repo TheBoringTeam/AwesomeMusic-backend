@@ -1,6 +1,6 @@
 package com.music.awesomemusic.repositories
 
-import com.music.awesomemusic.domain.domain.EmailVerificationToken
+import com.music.awesomemusic.persistence.domain.EmailVerificationToken
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
