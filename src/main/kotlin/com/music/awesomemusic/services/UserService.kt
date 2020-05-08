@@ -1,20 +1,17 @@
 package com.music.awesomemusic.services
 
-import com.music.awesomemusic.domain.EmailVerificationToken
-import com.music.awesomemusic.domain.Role
+import com.music.awesomemusic.domain.persistence.EmailVerificationToken
+import com.music.awesomemusic.domain.persistence.Role
 import com.music.awesomemusic.domain.dto.UserRegistrationForm
-import com.music.awesomemusic.domain.AwesomeUser
+import com.music.awesomemusic.domain.persistence.AwesomeUser
 import com.music.awesomemusic.repositories.IRoleRepository
 import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.repositories.IUserRepository
-import com.music.awesomemusic.utils.errors.UsernameExistsException
 import javassist.NotFoundException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException
-import java.util.*
 import kotlin.collections.ArrayList
 
 @Service

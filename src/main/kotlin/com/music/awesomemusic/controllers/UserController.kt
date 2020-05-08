@@ -1,10 +1,9 @@
 package com.music.awesomemusic.controllers
 
-import com.music.awesomemusic.domain.AwesomeUser
+import com.music.awesomemusic.domain.persistence.AwesomeUser
 import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.domain.dto.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
-import com.music.awesomemusic.services.AwesomeUserDetailsService
 import com.music.awesomemusic.services.UserService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService
 import com.music.awesomemusic.utils.errors.ErrorMapHandler
@@ -12,7 +11,6 @@ import com.music.awesomemusic.utils.errors.TooManyAttempts
 import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
 import com.music.awesomemusic.utils.validators.UserValidator
-import javassist.Loader
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
@@ -28,12 +26,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.context.request.WebRequest
 import java.lang.Exception
 import java.util.*
 import javax.servlet.http.HttpServletRequest
-import kotlin.collections.HashMap
 
 /**
  * Controller for user management.

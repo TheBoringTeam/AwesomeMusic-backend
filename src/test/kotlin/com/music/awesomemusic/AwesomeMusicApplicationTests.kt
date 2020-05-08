@@ -1,11 +1,10 @@
 package com.music.awesomemusic
 
-import com.music.awesomemusic.domain.AwesomeUser
+import com.music.awesomemusic.domain.persistence.AwesomeUser
 import com.music.awesomemusic.domain.dto.UserRegistrationForm
 import com.music.awesomemusic.repositories.IUserRepository
 import com.music.awesomemusic.services.UserService
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
+import junit.framework.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,12 +49,10 @@ class AwesomeMusicApplicationTests {
 
     @Test
     fun checkUserCreateSuccess() {
-        val userRegistrationForm = UserRegistrationForm("test_username", "", "email")
+        val userRegistrationForm = UserRegistrationForm("test_username", "12", "email")
         val user = userService.createUser(userRegistrationForm)
 
-        val userFromDb = userRepository.getById(user.id)
-
-        assertNotNull(userFromDb)
-        assertEquals(userFromDb!!.username, user.username)
+        assertNotSame(user.password, "12")
     }
+
 }

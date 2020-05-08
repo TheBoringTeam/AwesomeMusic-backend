@@ -1,7 +1,6 @@
-package com.music.awesomemusic.domain
+package com.music.awesomemusic.domain.persistence
 
-import com.music.awesomemusic.domain.AwesomeUser
-import java.security.Timestamp
+import com.music.awesomemusic.domain.persistence.AwesomeUser
 import java.util.*
 import javax.persistence.*
 

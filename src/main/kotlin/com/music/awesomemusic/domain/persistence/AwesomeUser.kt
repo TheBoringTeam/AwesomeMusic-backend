@@ -1,7 +1,5 @@
-package com.music.awesomemusic.domain
+package com.music.awesomemusic.domain.persistence
 
-import com.music.awesomemusic.domain.Role
-import org.hibernate.annotations.CollectionId
 import javax.persistence.*
 
 @Entity
@@ -30,7 +28,7 @@ public class AwesomeUser(
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
-            inverseJoinColumns = [JoinColumn(name = "role_id", referencedColumnName = "id")])
+            inverseJoinColumns = [JoinColumn(name = "role_id", referencedColumnName = "role_id")])
     var roles: List<Role> = arrayListOf()
 
 }
