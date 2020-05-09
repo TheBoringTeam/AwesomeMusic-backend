@@ -1,9 +1,9 @@
 package com.music.awesomemusic
 
 
-import com.music.awesomemusic.persistence.domain.AwesomeUser
+import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
-import com.music.awesomemusic.repositories.IUserRepository
+import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.services.AccountService
 import junit.framework.Assert.*
 import org.junit.After
@@ -19,19 +19,20 @@ import org.springframework.test.context.junit4.SpringRunner
 class AwesomeMusicApplicationTests {
 
     @Autowired
-    lateinit var userRepository: IUserRepository
+    lateinit var accountService: AccountService
 
     @Autowired
-    lateinit var accountService: AccountService
+    lateinit var accountRepository: IAccountRepository
+
 
     @Before
     fun init() {
-        userRepository.deleteAll()
+        accountRepository.deleteAll()
     }
 
     @After
     fun finish() {
-        userRepository.deleteAll()
+        accountRepository.deleteAll()
     }
 
     @Test
@@ -47,17 +48,16 @@ class AwesomeMusicApplicationTests {
 
     @Test
     fun checkUnique() {
-        val allUsers = userRepository.findAll()
-        val user = AwesomeUser("testUsername", "12125125",
-                "test@mail.com")
+        val allAccounts = accountRepository.findAll()
+        val account = AwesomeAccount("testUsername", "12125125",
+                "test@mail.com", "some_name", false)
 
-        userRepository.save(user)
-        val oneUser = userRepository.findAll()
+        accountService.saveAccount(account)
 
-        val createdUser = userRepository.findById(1)
-        assertEquals(0, allUsers.count())
+        val createdAccount = accountRepository.findById(1)
+        assertEquals(0, allAccounts.count())
 
-        assertNotNull(createdUser)
+        assertNotNull(createdAccount)
     }
 
     @Test
