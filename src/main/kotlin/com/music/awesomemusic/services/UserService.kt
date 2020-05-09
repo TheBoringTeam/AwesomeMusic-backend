@@ -4,7 +4,7 @@ package com.music.awesomemusic.services
 import com.music.awesomemusic.persistence.domain.AwesomeUser
 import com.music.awesomemusic.persistence.domain.EmailVerificationToken
 import com.music.awesomemusic.persistence.domain.Role
-import com.music.awesomemusic.persistence.dto.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.repositories.IRoleRepository
 import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.repositories.IUserRepository

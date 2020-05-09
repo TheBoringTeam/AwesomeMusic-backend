@@ -2,9 +2,10 @@ package com.music.awesomemusic.controllers
 
 
 import com.music.awesomemusic.persistence.domain.AwesomeUser
-import com.music.awesomemusic.persistence.dto.UserRegistrationForm
-import com.music.awesomemusic.persistence.dto.UserSignInForm
+import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
+import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.services.UserService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService
 import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
@@ -48,6 +49,9 @@ class UserController {
 
     @Autowired
     lateinit var userValidator: UserValidator
+
+    @Autowired
+    lateinit var accountService: AccountService
 
     @Autowired
     lateinit var messages: MessageSource
@@ -104,12 +108,18 @@ class UserController {
         authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
 
         //get authenticated user
-        val user = userService.findByUsername(userSignInForm.username)
+        val user = accountService.findByUsername(userSignInForm.username)
+
+        val authorities = arrayListOf<String>()
+//        user.roles.forEach { roleMapping ->
+//            roleMapping.role.permissions.forEach { permission ->
+//                authorities.add(permission.name)
+//            }
+//        }
 
         // return token for user
-        val token = jwtTokenProvider.createToken(user.username, user.roles.map { it.roleName })
+        val token = jwtTokenProvider.createToken(user.username, authorities)
         return ResponseBuilderMap().addField("token", token).toJSON()
-
     }
 
     @GetMapping("/me")

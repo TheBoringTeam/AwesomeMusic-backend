@@ -1,6 +1,6 @@
 package com.music.awesomemusic.utils.validators
 
-import com.music.awesomemusic.persistence.dto.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

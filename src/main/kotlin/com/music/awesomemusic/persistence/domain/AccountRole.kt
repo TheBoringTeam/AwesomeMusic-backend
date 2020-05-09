@@ -3,20 +3,19 @@ package com.music.awesomemusic.persistence.domain
 import java.time.LocalDateTime
 import javax.persistence.*
 
-
 @Entity
 @Table(name = "account_role")
 class AccountRole(
-        @Column(name = "expiry_at", nullable = true)
-        var expiryAt: LocalDateTime? = null,
-
         @ManyToOne
         @JoinColumn(name = "account_id")
         var account: AwesomeAccount,
 
         @ManyToOne
         @JoinColumn(name = "role_id")
-        var role: Role
+        var role: Role,
+
+        @Column(name = "expiry_at", nullable = true)
+        var expiryAt: LocalDateTime? = null
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

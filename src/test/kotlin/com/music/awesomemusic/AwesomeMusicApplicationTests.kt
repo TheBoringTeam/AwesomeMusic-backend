@@ -2,7 +2,7 @@ package com.music.awesomemusic
 
 
 import com.music.awesomemusic.persistence.domain.AwesomeUser
-import com.music.awesomemusic.persistence.dto.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.repositories.IUserRepository
 import com.music.awesomemusic.services.UserService
 import junit.framework.Assert.*
