@@ -31,7 +31,7 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
         if (username.isEmpty()) {
             throw UsernameNotFoundException("Username is empty")
         }
-        
+
         if (loginAttemptService.isBlocked(getClientIP())) {
             throw TooManyAttemptsException("Too many unsuccessful attempts to log in. Please try later")
         }
