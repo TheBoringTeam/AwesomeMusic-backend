@@ -1,6 +1,6 @@
 package com.music.awesomemusic.repositories
 
-import com.music.awesomemusic.domain.persistence.Role
+import com.music.awesomemusic.persistence.domain.Role
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.*

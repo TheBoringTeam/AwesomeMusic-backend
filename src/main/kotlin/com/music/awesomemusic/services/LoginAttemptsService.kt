@@ -35,11 +35,13 @@ class LoginAttemptsService {
         attempts = try {
             attemptsCache.get(key)
         } catch (e: ExecutionException) {
+            _logger.info("new key")
             0
         }
 
         attempts++
 
+        _logger.info(attempts)
         attemptsCache.put(key, attempts)
     }
 

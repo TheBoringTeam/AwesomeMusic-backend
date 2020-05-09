@@ -29,3 +29,5 @@ hs_err_pid*
 /.env
 /.env-dev
 src/test/resources
+src/main/resources/application.yml
+src/main/resources/application-prd.properties

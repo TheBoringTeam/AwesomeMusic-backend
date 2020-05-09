@@ -1,6 +1,6 @@
 package com.music.awesomemusic.services
 
-
+import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.utils.exceptions.user.TooManyAttemptsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,14 +14,12 @@ import org.springframework.stereotype.Service
 import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
 
-
 @Service
-class AwesomeUserDetailsService : UserDetailsService, Serializable {
-
-    private val logger = Logger.getLogger(AwesomeUserDetailsService::class.java)
+class AccountUserDetailsService : UserDetailsService, Serializable {
+    private val logger = Logger.getLogger(AccountUserDetailsService::class.java)
 
     @Autowired
-    lateinit var userService: UserService
+    lateinit var accountService: AccountService
 
     @Autowired
     lateinit var loginAttemptService: LoginAttemptsService
@@ -29,31 +27,26 @@ class AwesomeUserDetailsService : UserDetailsService, Serializable {
     @Autowired
     private lateinit var request: HttpServletRequest
 
-    override fun loadUserByUsername(username: String?): UserDetails {
-        if (username.isNullOrEmpty()) {
+    override fun loadUserByUsername(username: String): UserDetails {
+        if (username.isEmpty()) {
             throw UsernameNotFoundException("Username is empty")
         }
 
-        val ip = getClientIP()
-        logger.error("Ip try to log in is $ip")
-        if (loginAttemptService.isBlocked(ip)) {
-            logger.info("Ip is blocked")
+        if (loginAttemptService.isBlocked(getClientIP())) {
             throw TooManyAttemptsException("Too many unsuccessful attempts to log in. Please try later")
-        } else {
-            logger.info("Ip is fine")
         }
 
-        val user = userService.findByUsername(username) ?: throw UsernameNotFoundException("User was not found")
+        val user: AwesomeAccount = accountService.findByUsername(username)
 
         val authorities = arrayListOf<GrantedAuthority>()
 
-        user.roles.forEach { it ->
-            authorities.add(SimpleGrantedAuthority(it.roleName))
+        user.roles.forEach { roleMapping ->
+            roleMapping.role.permissions.forEach { permission ->
+                authorities.add(SimpleGrantedAuthority(permission.name))
+            }
         }
-        val userDetails = User(user.username, user.password, authorities)
 
-        logger.debug("User authentication successfully: " + userDetails.password)
-        return userDetails
+        return User(user.username, user.password, authorities)
     }
 
     private fun getClientIP(): String {

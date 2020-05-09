@@ -1,4 +1,4 @@
-package com.music.awesomemusic.domain.persistence
+package com.music.awesomemusic.persistence.domain
 
 import java.net.URL
 import java.time.LocalDateTime
