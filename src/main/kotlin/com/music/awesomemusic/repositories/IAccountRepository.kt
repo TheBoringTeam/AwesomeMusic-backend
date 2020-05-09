@@ -9,4 +9,8 @@ import java.util.*
 @Repository
 interface IAccountRepository : CrudRepository<AwesomeAccount, Long> {
     fun findByUsername(username: String): Optional<AwesomeAccount>
+
+    fun existsByEmail(email: String): Boolean
+
+    fun existsByUsername(username: String) : Boolean
 }

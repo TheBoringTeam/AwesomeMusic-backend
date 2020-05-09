@@ -9,8 +9,8 @@ class EmailVerificationToken(
         @Column(name = "token")
         val token: String,
 
-        @OneToOne(targetEntity = AwesomeUser::class, fetch = FetchType.EAGER)
-        @JoinColumn(nullable = false, name = "user_id") val user: AwesomeUser
+        @OneToOne(targetEntity = AwesomeAccount::class, fetch = FetchType.EAGER)
+        @JoinColumn(nullable = false, name = "account_id") val account: AwesomeAccount
 ) {
     @Transient
     private val EXPIRATION = 60 * 24

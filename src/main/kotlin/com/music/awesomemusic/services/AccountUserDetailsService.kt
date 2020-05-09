@@ -40,11 +40,11 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
 
         val authorities = arrayListOf<GrantedAuthority>()
 
-//        user.roles.forEach { roleMapping ->
-//            roleMapping.role.permissions.forEach { permission ->
-//                authorities.add(SimpleGrantedAuthority(permission.name))
-//            }
-//        }
+        user.accountRoles.forEach { roleMapping ->
+            roleMapping.role.permissions.forEach { permission ->
+                authorities.add(SimpleGrantedAuthority(permission.name))
+            }
+        }
 
         return User(user.username, user.password, authorities)
     }

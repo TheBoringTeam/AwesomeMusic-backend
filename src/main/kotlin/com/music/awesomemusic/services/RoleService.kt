@@ -9,11 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class RoleService() {
+class RoleService @Autowired constructor(private val _roleRepository: IRoleRepository) {
 
-
-//    fun findByName(roleName: String): AccountRole {
-//        return _roleRepository.findByRoleName(roleName)
-//                .orElseThrow { ResourceNotFoundException("Role with name $roleName was not found") }
-//    }
+    fun findByName(roleName: String): Role {
+        return _roleRepository.findByRoleName(roleName)
+                .orElseThrow { ResourceNotFoundException("Role with name $roleName was not found") }
+    }
 }

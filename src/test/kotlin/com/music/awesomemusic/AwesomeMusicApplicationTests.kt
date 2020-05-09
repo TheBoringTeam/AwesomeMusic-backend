@@ -4,7 +4,7 @@ package com.music.awesomemusic
 import com.music.awesomemusic.persistence.domain.AwesomeUser
 import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.repositories.IUserRepository
-import com.music.awesomemusic.services.UserService
+import com.music.awesomemusic.services.AccountService
 import junit.framework.Assert.*
 import org.junit.After
 import org.junit.Before
@@ -22,7 +22,7 @@ class AwesomeMusicApplicationTests {
     lateinit var userRepository: IUserRepository
 
     @Autowired
-    lateinit var userService: UserService
+    lateinit var accountService: AccountService
 
     @Before
     fun init() {
@@ -62,8 +62,8 @@ class AwesomeMusicApplicationTests {
 
     @Test
     fun checkUserCreateSuccess() {
-        val userRegistrationForm = UserRegistrationForm("test_username", "12", "email")
-        val user = userService.createUser(userRegistrationForm)
+        val userRegistrationForm = UserRegistrationForm("test_username", "12", "email", false)
+        val user = accountService.createAccount(userRegistrationForm)
 
         assertNotSame(user.password, "12")
     }
