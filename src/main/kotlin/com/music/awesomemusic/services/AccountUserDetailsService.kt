@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest
 
 @Service
 class AccountUserDetailsService : UserDetailsService, Serializable {
-    private val logger = Logger.getLogger(AccountUserDetailsService::class.java)
+    private val _logger = Logger.getLogger(AccountUserDetailsService::class.java)
 
     @Autowired
     lateinit var accountService: AccountService
@@ -40,7 +40,7 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
 
         val authorities = arrayListOf<GrantedAuthority>()
 
-        user.roles.forEach { roleMapping ->
+        user.accountRoles.forEach { roleMapping ->
             roleMapping.role.permissions.forEach { permission ->
                 authorities.add(SimpleGrantedAuthority(permission.name))
             }

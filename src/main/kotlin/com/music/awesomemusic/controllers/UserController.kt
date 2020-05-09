@@ -1,11 +1,10 @@
 package com.music.awesomemusic.controllers
 
 
-import com.music.awesomemusic.persistence.domain.AwesomeUser
-import com.music.awesomemusic.persistence.dto.UserRegistrationForm
-import com.music.awesomemusic.persistence.dto.UserSignInForm
+import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
-import com.music.awesomemusic.services.UserService
+import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.utils.errors.MapValidationErrorService
 import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
@@ -38,9 +37,6 @@ class UserController {
     private val _logger = Logger.getLogger(UserController::class.java)
 
     @Autowired
-    lateinit var userService: UserService
-
-    @Autowired
     lateinit var authenticationManager: AuthenticationManager
 
     @Autowired
@@ -50,6 +46,9 @@ class UserController {
     lateinit var userValidator: UserValidator
 
     @Autowired
+    lateinit var accountService: AccountService
+
+    @Autowired
     lateinit var messages: MessageSource
 
     @Autowired
@@ -57,12 +56,6 @@ class UserController {
 
     @Autowired
     lateinit var applicationEventPublisher: ApplicationEventPublisher
-
-    @GetMapping("/{id}")
-    fun info(@PathVariable id: Long): ResponseEntity<*> {
-        val user = userService.findById(id)
-        return ResponseEntity<AwesomeUser>(user, HttpStatus.OK)
-    }
 
     @GetMapping("/hello")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -86,12 +79,12 @@ class UserController {
             return errorMap
         }
 
-        val createdUser = userService.createUser(userRegistrationForm)
+        val account = accountService.createAccount(userRegistrationForm)
 
         _logger.debug("User was created")
 
         // send registration mail via event
-        applicationEventPublisher.publishEvent(OnRegistrationCompleteEvent(createdUser, request.locale, request.contextPath))
+        applicationEventPublisher.publishEvent(OnRegistrationCompleteEvent(account, request.locale, request.contextPath))
 
         return ResponseEntity<String>(HttpStatus.CREATED)
     }
@@ -104,23 +97,29 @@ class UserController {
         authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
 
         //get authenticated user
-        val user = userService.findByUsername(userSignInForm.username)
+        val user = accountService.findByUsername(userSignInForm.username)
+
+        val authorities = arrayListOf<String>()
+//        user.roles.forEach { roleMapping ->
+//            roleMapping.role.permissions.forEach { permission ->
+//                authorities.add(permission.name)
+//            }
+//        }
 
         // return token for user
-        val token = jwtTokenProvider.createToken(user.username, user.roles.map { it.roleName })
+        val token = jwtTokenProvider.createToken(user.username, authorities)
         return ResponseBuilderMap().addField("token", token).toJSON()
-
     }
 
     @GetMapping("/me")
     fun me(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
-        val user = userService.findByUsername(userDetails.username)
+        val account = accountService.findByUsername(userDetails.username)
 
         return ResponseBuilderMap()
                 .addField("username", userDetails.username)
                 .addField("is_admin", userDetails.authorities.contains(SimpleGrantedAuthority("ADMIN")))
-                .addField("email", user.email)
-                .addField("is_activated", user.isActivated)
+                .addField("email", account.email)
+                .addField("is_activated", account.isActivated)
                 .toJSON()
     }
 
@@ -128,7 +127,7 @@ class UserController {
     fun registrationConfirm(@RequestParam("token") token: String, request: WebRequest): ResponseEntity<*> {
         val locale = request.locale
 
-        val verificationToken = userService.getVerificationToken(token)
+        val verificationToken = accountService.getVerificationToken(token)
 
         if (verificationToken == null) {
             val message = messages.getMessage("auth.message.invalid", null, locale)
@@ -137,7 +136,7 @@ class UserController {
             return ResponseEntity<String>(message, HttpStatus.OK)
         }
 
-        val user = verificationToken.user
+        val account = verificationToken.account
 
         val cal = Calendar.getInstance()
 
@@ -147,8 +146,8 @@ class UserController {
             return ResponseEntity<String>(message, HttpStatus.OK)
         }
 
-        user.isActivated = true
-        userService.saveUser(user)
+        account.isActivated = true
+        accountService.saveAccount(account)
 
         // TODO: Redirect to front-end
         return ResponseEntity<String>("Fine", HttpStatus.OK)

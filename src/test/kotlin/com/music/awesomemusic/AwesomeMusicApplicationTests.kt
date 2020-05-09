@@ -1,10 +1,10 @@
 package com.music.awesomemusic
 
 
-import com.music.awesomemusic.persistence.domain.AwesomeUser
-import com.music.awesomemusic.persistence.dto.UserRegistrationForm
-import com.music.awesomemusic.repositories.IUserRepository
-import com.music.awesomemusic.services.UserService
+import com.music.awesomemusic.persistence.domain.AwesomeAccount
+import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.repositories.IAccountRepository
+import com.music.awesomemusic.services.AccountService
 import junit.framework.Assert.*
 import org.junit.After
 import org.junit.Before
@@ -19,53 +19,34 @@ import org.springframework.test.context.junit4.SpringRunner
 class AwesomeMusicApplicationTests {
 
     @Autowired
-    lateinit var userRepository: IUserRepository
+    lateinit var accountService: AccountService
 
     @Autowired
-    lateinit var userService: UserService
+    lateinit var accountRepository: IAccountRepository
+
 
     @Before
     fun init() {
-        userRepository.deleteAll()
+        accountRepository.deleteAll()
     }
 
-    @After
-    fun finish() {
-        userRepository.deleteAll()
-    }
 
     @Test
     fun contextLoads() {
     }
 
-    @Test
-    fun sumTwoNumber() {
-        val result = 6
-        assertEquals(result, 6)
-    }
-
 
     @Test
-    fun checkUnique() {
-        val allUsers = userRepository.findAll()
-        val user = AwesomeUser("testUsername", "12125125",
-                "test@mail.com")
+    fun checkDatabaseUniqueValues() {
+        val allAccounts = accountRepository.findAll()
+        val account = AwesomeAccount("testUsername", "12125125",
+                "test@mail.com", "some_name", false)
 
-        userRepository.save(user)
-        val oneUser = userRepository.findAll()
+        accountService.saveAccount(account)
 
-        val createdUser = userRepository.findById(1)
-        assertEquals(0, allUsers.count())
+        val createdAccount = accountRepository.findById(1)
+        assertEquals(0, allAccounts.count())
 
-        assertNotNull(createdUser)
+        assertNotNull(createdAccount)
     }
-
-    @Test
-    fun checkUserCreateSuccess() {
-        val userRegistrationForm = UserRegistrationForm("test_username", "12", "email")
-        val user = userService.createUser(userRegistrationForm)
-
-        assertNotSame(user.password, "12")
-    }
-
 }
