@@ -30,24 +30,14 @@ class AwesomeMusicApplicationTests {
         accountRepository.deleteAll()
     }
 
-    @After
-    fun finish() {
-        accountRepository.deleteAll()
-    }
 
     @Test
     fun contextLoads() {
     }
 
-    @Test
-    fun sumTwoNumber() {
-        val result = 6
-        assertEquals(result, 6)
-    }
-
 
     @Test
-    fun checkUnique() {
+    fun checkDatabaseUniqueValues() {
         val allAccounts = accountRepository.findAll()
         val account = AwesomeAccount("testUsername", "12125125",
                 "test@mail.com", "some_name", false)
@@ -59,13 +49,4 @@ class AwesomeMusicApplicationTests {
 
         assertNotNull(createdAccount)
     }
-
-    @Test
-    fun checkUserCreateSuccess() {
-        val userRegistrationForm = UserRegistrationForm("test_username", "12", "email", false)
-        val user = accountService.createAccount(userRegistrationForm)
-
-        assertNotSame(user.password, "12")
-    }
-
 }

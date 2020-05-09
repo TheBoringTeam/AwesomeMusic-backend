@@ -47,14 +47,8 @@ class AccountService {
         try {
             _logger.debug("Creating user was started")
 
-            val role = roleService.findByName("USER")
-
             val account = AwesomeAccount(userFormDto.username, passwordEncoder.encode(userFormDto.password), userFormDto.email,
                     userFormDto.username, userFormDto.isCollective)
-
-            // TODO : May be some optimization here (IDK rly)
-            // add role to new user
-            account.addRole(role)
 
             accountRepository.save(account)
 

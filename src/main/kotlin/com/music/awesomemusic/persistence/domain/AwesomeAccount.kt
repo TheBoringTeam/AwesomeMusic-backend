@@ -13,7 +13,7 @@ class AwesomeAccount(
         @Column(name = "account_dog", length = 16, unique = true, nullable = false)
         var username: String,
 
-        @Column(name = "password", length = 32, nullable = false)
+        @Column(name = "password", nullable = false)
         var password: String,
 
         @Column(name = "account_email", length = 254, unique = true, nullable = false)
