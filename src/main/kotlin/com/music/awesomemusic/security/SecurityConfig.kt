@@ -2,6 +2,7 @@ package com.music.awesomemusic.security
 
 import com.music.awesomemusic.security.tokens.JwtConfigurer
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
+import com.music.awesomemusic.services.AccountUserDetailsService
 import com.music.awesomemusic.services.AwesomeUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -23,7 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class SecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
-    lateinit var userDetailsService: AwesomeUserDetailsService
+    lateinit var userDetailsService: AccountUserDetailsService
 
     @Autowired
     lateinit var jwtTokenProvider: JwtTokenProvider

@@ -13,4 +13,9 @@ class Role(roleName: String) {
     @Column(name = "role_name")
     var roleName: String = roleName
         private set
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "role_permission", joinColumns = [JoinColumn(name = "role_id", referencedColumnName = "role_id")],
+            inverseJoinColumns = [JoinColumn(name = "permission_id", referencedColumnName = "permission_id")])
+    var permissions: List<Permission> = arrayListOf()
 }
