@@ -6,6 +6,8 @@ import com.music.awesomemusic.persistence.dto.UserRegistrationForm
 import com.music.awesomemusic.repositories.IUserRepository
 import com.music.awesomemusic.services.UserService
 import junit.framework.Assert.*
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +23,16 @@ class AwesomeMusicApplicationTests {
 
     @Autowired
     lateinit var userService: UserService
+
+    @Before
+    fun init() {
+        userRepository.deleteAll()
+    }
+
+    @After
+    fun finish() {
+        userRepository.deleteAll()
+    }
 
     @Test
     fun contextLoads() {
