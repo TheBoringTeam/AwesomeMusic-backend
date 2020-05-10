@@ -1,6 +1,6 @@
 package com.music.awesomemusic.security.tokens
 
-import com.music.awesomemusic.services.AwesomeUserDetailsService
+import com.music.awesomemusic.services.AccountUserDetailsService
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -27,7 +27,7 @@ class JwtTokenProvider {
     private var validityInMilliseconds: Long = 3600000 * 24 * 7 // 3600000 - 1h
 
     @Autowired
-    private lateinit var userDetailsService: AwesomeUserDetailsService
+    private lateinit var accountUserDetailsService: AccountUserDetailsService
 
     @PostConstruct
     protected fun init() {
@@ -48,7 +48,7 @@ class JwtTokenProvider {
     }
 
     fun getAuthentication(token: String?): Authentication {
-        val userDetails = userDetailsService.loadUserByUsername(getUsername(token))
+        val userDetails = accountUserDetailsService.loadUserByUsername(getUsername(token))
         return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 

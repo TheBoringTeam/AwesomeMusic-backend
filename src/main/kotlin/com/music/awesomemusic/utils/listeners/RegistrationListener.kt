@@ -1,6 +1,6 @@
 package com.music.awesomemusic.utils.listeners
 
-import com.music.awesomemusic.services.UserService
+import com.music.awesomemusic.services.AccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationListener
@@ -14,33 +14,37 @@ import java.util.*
 class RegistrationListener : ApplicationListener<OnRegistrationCompleteEvent> {
 
     @Autowired
-    lateinit var userService: UserService
+    lateinit var accountService: AccountService
 
     @Autowired
     lateinit var messages: MessageSource
 
     @Autowired
-    lateinit var sender : JavaMailSender
+    lateinit var sender: JavaMailSender
 
     @Value("\${spring.mail.username}")
-    lateinit var mailAddress : String
+    lateinit var mailAddress: String
 
-    @Value("\${spring.mail.app.url}")
-    lateinit var urlAddress : String
+    @Value("\${spring.mail.ip}")
+    lateinit var ip: String
+
+    @Value("\${server.port}")
+    lateinit var port: String
+
 
     override fun onApplicationEvent(event: OnRegistrationCompleteEvent) {
         this.confirmRegistration(event)
     }
 
     private fun confirmRegistration(event: OnRegistrationCompleteEvent) {
-        val user = event.user
+        val account = event.account
         val token = UUID.randomUUID().toString()
-        userService.createEmailVerificationToken(user, token)
+        accountService.createEmailVerificationToken(account, token)
 
-        val recipientAddress = user.email
+        val recipientAddress = account.email
 
         val subject = "AwesomeMusic - Email Conformation"
-        val confUrl = "http://$urlAddress/api/user/registrationConfirm?token=$token"
+        val confUrl = "http://$ip:$port/api/user/registrationConfirm?token=$token"
 
         // TODO : Handle different languages
         val message = messages.getMessage("message.regSucc", null, "You registered successfully." +

@@ -39,6 +39,7 @@ dependencies {
     implementation("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
     //Test
     implementation("org.springframework.boot:spring-boot-starter-test:2.1.6.RELEASE")
+    implementation("org.junit.jupiter:junit-jupiter-engine:5.7.0-M1")
     //Security
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
@@ -72,6 +73,6 @@ tasks.withType<Test> {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 }

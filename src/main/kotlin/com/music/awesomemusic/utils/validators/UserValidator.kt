@@ -1,7 +1,7 @@
 package com.music.awesomemusic.utils.validators
 
-import com.music.awesomemusic.domain.dto.UserRegistrationForm
-import com.music.awesomemusic.services.UserService
+import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.services.AccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
@@ -12,7 +12,7 @@ import org.springframework.validation.Validator
 class UserValidator : Validator {
 
     @Autowired
-    lateinit var userService: UserService
+    lateinit var accountService: AccountService
 
     val emailValidator: EmailValidator = EmailValidator()
 
@@ -32,7 +32,7 @@ class UserValidator : Validator {
         }
 
         // validate if username exists
-        if (userService.existsByUsername(user.username)) {
+        if (accountService.existsByUsername(user.username)) {
             errors.rejectValue("username", "Exists", "User with this username already exists")
         }
 
@@ -45,7 +45,7 @@ class UserValidator : Validator {
         }
 
         //validate if email exists
-        if (userService.existsByEmail(user.email)) {
+        if (accountService.existsByEmail(user.email)) {
             errors.rejectValue("email", "Exists", "User with this email already exists")
         }
 
