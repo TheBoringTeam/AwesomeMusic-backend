@@ -11,5 +11,7 @@ interface IAccountRepository : CrudRepository<AwesomeAccount, Long> {
 
     fun existsByEmail(email: String): Boolean
 
-    fun existsByUsername(username: String) : Boolean
+    fun existsByUsername(username: String): Boolean
+
+    fun findByEmail(email: String): Optional<AwesomeAccount>
 }

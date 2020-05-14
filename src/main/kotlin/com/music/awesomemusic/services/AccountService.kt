@@ -5,6 +5,7 @@ import com.music.awesomemusic.persistence.domain.EmailVerificationToken
 import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.repositories.IEmailTokenRepository
+import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import org.apache.log4j.Logger
 
 
@@ -79,5 +80,9 @@ class AccountService {
 
     fun existsByUsername(username: String): Boolean {
         return accountRepository.existsByUsername(username)
+    }
+
+    fun findByEmail(email: String): AwesomeAccount {
+        return accountRepository.findByEmail(email).orElseThrow { ResourceNotFoundException("User with such email doesn't exist") }
     }
 }
