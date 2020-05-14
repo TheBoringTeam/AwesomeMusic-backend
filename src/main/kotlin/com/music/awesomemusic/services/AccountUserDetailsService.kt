@@ -2,6 +2,7 @@ package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
+import com.music.awesomemusic.utils.exceptions.user.AccountNotActivatedException
 import com.music.awesomemusic.utils.exceptions.user.TooManyAttemptsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,6 +42,10 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
             accountService.findByEmail(username)
         } catch (e: ResourceNotFoundException) { // if doesn't exists, then find by username
             accountService.findByUsername(username)
+        }
+
+        if(!user.isActivated){
+            throw AccountNotActivatedException("Account is not activated.")
         }
 
         val authorities = arrayListOf<GrantedAuthority>()
