@@ -1,6 +1,7 @@
 package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
+import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import com.music.awesomemusic.utils.exceptions.user.TooManyAttemptsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +37,11 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
             throw TooManyAttemptsException("Too many unsuccessful attempts to log in. Please try later")
         }
 
-        val user: AwesomeAccount = accountService.findByUsername(username)
+        val user: AwesomeAccount = try { // try to find by email
+            accountService.findByEmail(username)
+        } catch (e: ResourceNotFoundException) { // if doesn't exists, then find by username
+            accountService.findByUsername(username)
+        }
 
         val authorities = arrayListOf<GrantedAuthority>()
 
