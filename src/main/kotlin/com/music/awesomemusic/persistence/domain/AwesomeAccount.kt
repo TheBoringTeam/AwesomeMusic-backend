@@ -30,7 +30,7 @@ class AwesomeAccount(
     @Column(name = "account_id")
     val id: Long = 0
 
-    @Column(name = "musician_biography", length = 1024)
+    @Column(name = "musician_biography", length = 1024, nullable = true)
     var biography: String = ""
 
     @Column(name = "birthday", nullable = true)
@@ -76,7 +76,7 @@ class AwesomeAccount(
 //            inverseJoinColumns = [JoinColumn(name = "role_id", referencedColumnName = "role_id")])
 //    var roles: List<Role> = arrayListOf()
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, orphanRemoval = true)
     var accountRoles: List<AccountRole> = arrayListOf()
 
     fun addRole(role: Role, expiry_at: LocalDateTime? = null) {
