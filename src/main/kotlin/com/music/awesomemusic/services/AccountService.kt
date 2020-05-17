@@ -2,7 +2,7 @@ package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.domain.EmailVerificationToken
-import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.repositories.IEmailTokenRepository
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
@@ -44,12 +44,12 @@ class AccountService {
         }
     }
 
-    fun createAccount(userFormDto: UserRegistrationForm): AwesomeAccount {
+    fun createAccount(userFormDto: AccountSignUpForm): AwesomeAccount {
         try {
             _logger.debug("Creating user was started")
 
-            val account = AwesomeAccount(userFormDto.username, passwordEncoder.encode(userFormDto.password), userFormDto.email,
-                    userFormDto.username, userFormDto.isCollective)
+            val account = AwesomeAccount(userFormDto.login, passwordEncoder.encode(userFormDto.password), userFormDto.email,
+                    userFormDto.login, userFormDto.isCollective)
 
             accountRepository.save(account)
 

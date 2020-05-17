@@ -9,7 +9,7 @@ class EmailVerificationToken(
         @Column(name = "token")
         val token: String,
 
-        @OneToOne(targetEntity = AwesomeAccount::class, fetch = FetchType.EAGER)
+        @OneToOne(targetEntity = AwesomeAccount::class, fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
         @JoinColumn(nullable = false, name = "account_id") val account: AwesomeAccount
 ) {
     @Transient

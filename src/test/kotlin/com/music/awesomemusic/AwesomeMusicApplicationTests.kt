@@ -2,11 +2,9 @@ package com.music.awesomemusic
 
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
-import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.services.AccountService
 import junit.framework.Assert.*
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

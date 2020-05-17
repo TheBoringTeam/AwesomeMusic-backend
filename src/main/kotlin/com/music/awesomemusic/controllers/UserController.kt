@@ -2,7 +2,7 @@ package com.music.awesomemusic.controllers
 
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
-import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.persistence.dto.request.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
@@ -23,7 +23,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
 import java.util.*
@@ -63,15 +62,18 @@ class UserController {
     }
 
     @PostMapping("/registration")
-    fun register(@Valid @RequestBody userRegistrationForm: UserRegistrationForm, bindingResult: BindingResult,
+    fun register(@Valid @RequestBody accountSignUpForm: AccountSignUpForm, bindingResult: BindingResult,
                  request: HttpServletRequest): ResponseEntity<*> {
         _logger.debug("Start register process")
 
         if (bindingResult.hasErrors()) {
+            for (error in bindingResult.allErrors) {
+                _logger.info(error.defaultMessage)
+            }
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
-        val account = accountService.createAccount(userRegistrationForm)
+        val account = accountService.createAccount(accountSignUpForm)
 
         _logger.debug("User was created")
 

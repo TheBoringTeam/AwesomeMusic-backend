@@ -1,9 +1,8 @@
 package com.music.awesomemusic.user
 
-import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.services.AccountService
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertNotSame
@@ -28,7 +27,7 @@ class PrivateUserTests {
 
     @Test
     fun checkAccountCreation() {
-        val userRegistrationForm = UserRegistrationForm("test_username", "12", "email", false)
+        val userRegistrationForm = AccountSignUpForm("test_username", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 
         assertNotSame(user.password, "12")

@@ -1,6 +1,7 @@
 package com.music.awesomemusic.utils.validators.logic
 
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
 import com.music.awesomemusic.utils.validators.annotations.UniqueEmail
 import org.springframework.beans.factory.annotation.Autowired
 import javax.validation.ConstraintValidator
@@ -12,6 +13,10 @@ class UniqueEmailValidator : ConstraintValidator<UniqueEmail, String> {
     lateinit var accountService: AccountService
 
     override fun isValid(value: String?, context: ConstraintValidatorContext?): Boolean {
-        return value != null && !accountService.existsByEmail(value)
+        if (value == null) {
+            throw WrongArgumentsException("Email could not be empty")
+        } else {
+            return !accountService.existsByEmail(value)
+        }
     }
 }
