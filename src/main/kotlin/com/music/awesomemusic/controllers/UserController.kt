@@ -1,14 +1,15 @@
 package com.music.awesomemusic.controllers
 
 
+import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.persistence.dto.request.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
-import com.music.awesomemusic.utils.errors.MapValidationErrorService
+import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
+import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
 import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
-import com.music.awesomemusic.utils.validators.UserValidator
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
@@ -22,10 +23,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
 import java.util.*
 import javax.servlet.http.HttpServletRequest
+import javax.validation.Valid
+
 
 /**
  * Controller for user management.
@@ -38,12 +42,6 @@ class UserController {
 
     @Autowired
     lateinit var authenticationManager: AuthenticationManager
-
-    @Autowired
-    lateinit var mapValidator: MapValidationErrorService
-
-    @Autowired
-    lateinit var userValidator: UserValidator
 
     @Autowired
     lateinit var accountService: AccountService
@@ -65,18 +63,12 @@ class UserController {
     }
 
     @PostMapping("/registration")
-    fun register(@RequestBody(required = true) userRegistrationForm: UserRegistrationForm, bindingResult: BindingResult,
+    fun register(@Valid @RequestBody userRegistrationForm: UserRegistrationForm, bindingResult: BindingResult,
                  request: HttpServletRequest): ResponseEntity<*> {
         _logger.debug("Start register process")
 
-        // validate fields
-        userValidator.validate(userRegistrationForm, bindingResult)
-        val errorMap = mapValidator.createErrorMap(bindingResult)
-
-        // show exceptions if they are present
-        if (errorMap != null) {
-            _logger.error("Registration validation failed")
-            return errorMap
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
         val account = accountService.createAccount(userRegistrationForm)
@@ -94,10 +86,15 @@ class UserController {
         _logger.debug("Start sign in process")
 
         // authenticate user
-        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
+        // Possibly could be optimized. Probably it's possible to get user from authentication object
+        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.login, userSignInForm.password))
 
         //get authenticated user
-        val user = accountService.findByUsername(userSignInForm.username)
+        val user: AwesomeAccount = try { // try to find by email
+            accountService.findByEmail(userSignInForm.login)
+        } catch (e: ResourceNotFoundException) { // if doesn't exists, then find by username
+            accountService.findByUsername(userSignInForm.login)
+        }
 
         val authorities = arrayListOf<String>()
 //        user.roles.forEach { roleMapping ->

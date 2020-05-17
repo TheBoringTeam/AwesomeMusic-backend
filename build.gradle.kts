@@ -34,6 +34,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     //Security
     implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.glassfish:javax.el:3.0.0")
     //Auth
     implementation("org.springframework.security:spring-security-jwt:1.1.0.RELEASE")
     implementation("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
