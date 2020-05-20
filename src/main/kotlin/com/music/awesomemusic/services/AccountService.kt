@@ -48,8 +48,8 @@ class AccountService {
         try {
             _logger.debug("Creating user was started")
 
-            val account = AwesomeAccount(userFormDto.login, passwordEncoder.encode(userFormDto.password), userFormDto.email,
-                    userFormDto.login, userFormDto.isCollective)
+            val account = AwesomeAccount(userFormDto.username, passwordEncoder.encode(userFormDto.password), userFormDto.email,
+                    userFormDto.username, userFormDto.isCollective)
 
             accountRepository.save(account)
 
