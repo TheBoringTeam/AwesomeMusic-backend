@@ -1,12 +1,12 @@
 package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
-import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
+import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
-import junit.framework.Assert.*
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotSame
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -53,7 +53,7 @@ class AccountCreateTest {
 
     @Test
     fun testCreateAccountValid() {
-        val userRegistrationForm = UserRegistrationForm("testUser6", "12", "email", false)
+        val userRegistrationForm = AccountSignUpForm("testUser6", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 
         val userFromRepo = accountRepository.findById(user.id).get()
@@ -62,7 +62,7 @@ class AccountCreateTest {
 
     @Test
     fun testEncoderPasswordForAccount() {
-        val userRegistrationForm = UserRegistrationForm("testUser6", "12", "email", false)
+        val userRegistrationForm = AccountSignUpForm("testUser6", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 
         assertNotSame(user.password, "12")
