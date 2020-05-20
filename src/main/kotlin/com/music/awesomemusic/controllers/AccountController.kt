@@ -31,13 +31,13 @@ import javax.validation.Valid
 
 
 /**
- * Controller for user management.
+ * Controller for account management.
  */
 @RestController
 @RequestMapping("api/user")
-class UserController {
+class AccountController {
 
-    private val _logger = Logger.getLogger(UserController::class.java)
+    private val _logger = Logger.getLogger(AccountController::class.java)
 
     @Autowired
     lateinit var authenticationManager: AuthenticationManager
@@ -99,11 +99,8 @@ class UserController {
         }
 
         val authorities = arrayListOf<String>()
-//        user.roles.forEach { roleMapping ->
-//            roleMapping.role.permissions.forEach { permission ->
-//                authorities.add(permission.name)
-//            }
-//        }
+
+        // TODO: Attach authorises to user
 
         // return token for user
         val token = jwtTokenProvider.createToken(user.username, authorities)
