@@ -2,6 +2,7 @@ package com.music.awesomemusic.user
 
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
+import com.music.awesomemusic.repositories.IEmailTokenRepository
 import com.music.awesomemusic.services.AccountService
 import org.junit.Before
 import org.junit.Test
@@ -20,16 +21,13 @@ class PrivateUserTests {
     @Autowired
     lateinit var accountRepository: IAccountRepository
 
+    @Autowired
+    lateinit var emailTokenRepository: IEmailTokenRepository
+
     @Before
     fun init() {
         accountRepository.deleteAll()
+        emailTokenRepository.deleteAll()
     }
 
-    @Test
-    fun checkAccountCreation() {
-        val userRegistrationForm = AccountSignUpForm("test_username", "12", "email", false)
-        val user = accountService.createAccount(userRegistrationForm)
-
-        assertNotSame(user.password, "12")
-    }
 }

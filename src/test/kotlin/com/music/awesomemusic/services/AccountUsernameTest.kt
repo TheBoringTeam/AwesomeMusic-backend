@@ -1,16 +1,15 @@
-package com.music.awesomemusic
+package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.domain.EmailVerificationToken
 import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
 import com.music.awesomemusic.repositories.IAccountRepository
-import com.music.awesomemusic.repositories.IEmailTokenRepository
-import com.music.awesomemusic.services.AccountService
 import junit.framework.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -20,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @SpringBootTest
 @RunWith(SpringRunner::class)
-class AwesomeMusicApplicationTests {
+class AccountUsernameTest {
 
     @Autowired
     lateinit var accountService: AccountService
@@ -28,14 +27,11 @@ class AwesomeMusicApplicationTests {
     @Autowired
     lateinit var accountRepository: IAccountRepository
 
-    @Autowired
-    lateinit var emailTokenRepository: IEmailTokenRepository
-
 
     @Before
     fun init() {
         accountRepository.deleteAll()
-        emailTokenRepository.deleteAll()
+
     }
 
 
@@ -45,17 +41,32 @@ class AwesomeMusicApplicationTests {
 
 
     @Test
-    fun testDatabaseUniqueValues() {
-        val allAccounts = accountRepository.findAll()
-        val account = AwesomeAccount("testUsername", "12125125",
-                "test@mail.com", "some_name", false)
+    fun testExistsByUsernameValid() {
+        val account = AwesomeAccount("testUsername","12", "email","name", false )
+        accountRepository.save(account)
 
-        accountService.saveAccount(account)
+        assertEquals(true, accountService.existsByUsername(account.username))
+    }
 
-        val createdAccount = accountRepository.findById(1)
-        assertEquals(0, allAccounts.count())
+    @Test
+    fun testFindByUsername() {
+        val account = AwesomeAccount("testUsername","12", "email","name", false )
+        accountRepository.save(account)
 
-        assertNotNull(createdAccount)
+        val accountFromService = accountService.findByUsername(account.username)
+
+        assertEquals(accountFromService.username, account.username)
+    }
+
+
+    @Test
+    fun testFindByUsernameWithThrowExceptionFail() {
+        val account = AwesomeAccount("testUsername","12", "email","name", false )
+        accountRepository.save(account)
+
+        assertThrows<UsernameNotFoundException> {
+            accountService.findByUsername(account.username + "12")
+        }
     }
 }
 
