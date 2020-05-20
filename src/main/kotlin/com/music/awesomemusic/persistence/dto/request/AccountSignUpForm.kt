@@ -12,6 +12,7 @@ class AccountSignUpForm @JsonCreator constructor(
         @field:NotEmpty(message = "Login could not be empty")
         @field:UniqueUsername
         @field:Size(message = "Login should be from 6 to 32 length", min = 5, max = 32)
+        @field:Pattern(regexp = "^(?=[a-zA-Z0-9._]}\$)(?!.*[_.]{2})[^_.].*[^_.]\$")
         private val usernameField: String?,
 
         @field:JsonProperty("password")
