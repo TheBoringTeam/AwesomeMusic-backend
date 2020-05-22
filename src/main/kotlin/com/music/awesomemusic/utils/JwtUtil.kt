@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 import java.util.function.Function
 import kotlin.collections.HashMap
-import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 class JwtUtil {
