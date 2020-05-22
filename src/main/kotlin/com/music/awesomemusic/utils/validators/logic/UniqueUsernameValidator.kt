@@ -2,7 +2,6 @@ package com.music.awesomemusic.utils.validators.logic
 
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
-import com.music.awesomemusic.utils.validators.annotations.UniqueEmail
 import com.music.awesomemusic.utils.validators.annotations.UniqueUsername
 import org.springframework.beans.factory.annotation.Autowired
 import javax.validation.ConstraintValidator

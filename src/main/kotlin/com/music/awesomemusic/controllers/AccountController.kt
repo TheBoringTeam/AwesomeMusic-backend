@@ -2,8 +2,8 @@ package com.music.awesomemusic.controllers
 
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
+import com.music.awesomemusic.persistence.dto.request.AccountLoginForm
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
-import com.music.awesomemusic.persistence.dto.request.UserSignInForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
@@ -84,18 +84,18 @@ class AccountController {
     }
 
     @PostMapping("/sign-in")
-    fun signIn(@RequestBody(required = true) userSignInForm: UserSignInForm, bindingResult: BindingResult): ResponseEntity<*> {
+    fun signIn(@RequestBody(required = true) accountLoginForm: AccountLoginForm, bindingResult: BindingResult): ResponseEntity<*> {
         _logger.debug("Start sign in process")
 
         // authenticate user
         // Possibly could be optimized. Probably it's possible to get user from authentication object
-        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.login, userSignInForm.password))
+        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(accountLoginForm.login, accountLoginForm.password))
 
         //get authenticated user
         val user: AwesomeAccount = try { // try to find by email
-            accountService.findByEmail(userSignInForm.login)
+            accountService.findByEmail(accountLoginForm.login)
         } catch (e: ResourceNotFoundException) { // if doesn't exists, then find by username
-            accountService.findByUsername(userSignInForm.login)
+            accountService.findByUsername(accountLoginForm.login)
         }
 
         val authorities = arrayListOf<String>()
