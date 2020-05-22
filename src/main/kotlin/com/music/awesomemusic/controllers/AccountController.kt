@@ -146,6 +146,6 @@ class AccountController {
         accountService.saveAccount(account)
 
         // TODO: Redirect to front-end
-        return ResponseEntity<String>("Fine", HttpStatus.OK)
+        return ResponseEntity<String>("Here should be redirect to frontend", HttpStatus.OK)
     }
 }
