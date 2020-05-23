@@ -67,9 +67,6 @@ class AccountController {
         _logger.debug("Start register process")
 
         if (bindingResult.hasErrors()) {
-            for (error in bindingResult.allErrors) {
-                _logger.info(error.defaultMessage)
-            }
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
@@ -84,8 +81,12 @@ class AccountController {
     }
 
     @PostMapping("/sign-in")
-    fun signIn(@RequestBody(required = true) accountLoginForm: AccountLoginForm, bindingResult: BindingResult): ResponseEntity<*> {
+    fun signIn(@RequestBody(required = true) @Valid accountLoginForm: AccountLoginForm, bindingResult: BindingResult): ResponseEntity<*> {
         _logger.debug("Start sign in process")
+
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
 
         // authenticate user
         // Possibly could be optimized. Probably it's possible to get user from authentication object
