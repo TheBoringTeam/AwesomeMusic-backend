@@ -91,6 +91,7 @@ class AccountController {
         // Possibly could be optimized. Probably it's possible to get user from authentication object
         authenticationManager.authenticate(UsernamePasswordAuthenticationToken(accountLoginForm.login, accountLoginForm.password))
 
+
         //get authenticated user
         val user: AwesomeAccount = try { // try to find by email
             accountService.findByEmail(accountLoginForm.login)
