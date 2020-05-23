@@ -4,7 +4,6 @@ import java.net.URL
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
-import kotlin.collections.ArrayList
 
 
 @Entity
@@ -84,3 +83,5 @@ class AwesomeAccount(
         (accountRoles as ArrayList).add(accountRole)
     }
 }
+
+

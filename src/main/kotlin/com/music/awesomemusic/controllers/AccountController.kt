@@ -1,14 +1,15 @@
 package com.music.awesomemusic.controllers
 
 
-import com.music.awesomemusic.persistence.dto.request.UserRegistrationForm
-import com.music.awesomemusic.persistence.dto.request.UserSignInForm
+import com.music.awesomemusic.persistence.domain.AwesomeAccount
+import com.music.awesomemusic.persistence.dto.request.AccountLoginForm
+import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
-import com.music.awesomemusic.utils.errors.MapValidationErrorService
+import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
+import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
 import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
-import com.music.awesomemusic.utils.validators.UserValidator
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
@@ -26,24 +27,20 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
 import java.util.*
 import javax.servlet.http.HttpServletRequest
+import javax.validation.Valid
+
 
 /**
- * Controller for user management.
+ * Controller for account management.
  */
 @RestController
 @RequestMapping("api/user")
-class UserController {
+class AccountController {
 
-    private val _logger = Logger.getLogger(UserController::class.java)
+    private val _logger = Logger.getLogger(AccountController::class.java)
 
     @Autowired
     lateinit var authenticationManager: AuthenticationManager
-
-    @Autowired
-    lateinit var mapValidator: MapValidationErrorService
-
-    @Autowired
-    lateinit var userValidator: UserValidator
 
     @Autowired
     lateinit var accountService: AccountService
@@ -65,21 +62,15 @@ class UserController {
     }
 
     @PostMapping("/registration")
-    fun register(@RequestBody(required = true) userRegistrationForm: UserRegistrationForm, bindingResult: BindingResult,
+    fun register(@Valid @RequestBody accountSignUpForm: AccountSignUpForm, bindingResult: BindingResult,
                  request: HttpServletRequest): ResponseEntity<*> {
         _logger.debug("Start register process")
 
-        // validate fields
-        userValidator.validate(userRegistrationForm, bindingResult)
-        val errorMap = mapValidator.createErrorMap(bindingResult)
-
-        // show exceptions if they are present
-        if (errorMap != null) {
-            _logger.error("Registration validation failed")
-            return errorMap
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
-        val account = accountService.createAccount(userRegistrationForm)
+        val account = accountService.createAccount(accountSignUpForm)
 
         _logger.debug("User was created")
 
@@ -90,21 +81,28 @@ class UserController {
     }
 
     @PostMapping("/sign-in")
-    fun signIn(@RequestBody(required = true) userSignInForm: UserSignInForm, bindingResult: BindingResult): ResponseEntity<*> {
+    fun signIn(@RequestBody(required = true) @Valid accountLoginForm: AccountLoginForm, bindingResult: BindingResult): ResponseEntity<*> {
         _logger.debug("Start sign in process")
 
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
         // authenticate user
-        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(userSignInForm.username, userSignInForm.password))
+        // Possibly could be optimized. Probably it's possible to get user from authentication object
+        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(accountLoginForm.login, accountLoginForm.password))
+
 
         //get authenticated user
-        val user = accountService.findByUsername(userSignInForm.username)
+        val user: AwesomeAccount = try { // try to find by email
+            accountService.findByEmail(accountLoginForm.login)
+        } catch (e: ResourceNotFoundException) { // if doesn't exists, then find by username
+            accountService.findByUsername(accountLoginForm.login)
+        }
 
         val authorities = arrayListOf<String>()
-//        user.roles.forEach { roleMapping ->
-//            roleMapping.role.permissions.forEach { permission ->
-//                authorities.add(permission.name)
-//            }
-//        }
+
+        // TODO: Attach authorises to user
 
         // return token for user
         val token = jwtTokenProvider.createToken(user.username, authorities)
@@ -150,6 +148,6 @@ class UserController {
         accountService.saveAccount(account)
 
         // TODO: Redirect to front-end
-        return ResponseEntity<String>("Fine", HttpStatus.OK)
+        return ResponseEntity<String>("Here should be redirect to frontend", HttpStatus.OK)
     }
 }
