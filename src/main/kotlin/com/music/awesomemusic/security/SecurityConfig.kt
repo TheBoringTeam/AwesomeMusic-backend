@@ -63,7 +63,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http.antMatcher("/**")
                 .authorizeRequests()
                 .antMatchers("/api/user/registration", "/", "/api/user/registrationConfirm").permitAll()
-                .antMatchers("/api/user/sign-in").permitAll()
+                .antMatchers("/api/user/sign-in", "/api/user/resetPassword").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .cors().and()
