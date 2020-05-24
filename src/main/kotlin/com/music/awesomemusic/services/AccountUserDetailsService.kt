@@ -29,13 +29,17 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
     @Autowired
     lateinit var loginAttemptService: LoginAttemptsService
 
+    @Autowired
+    private lateinit var request: HttpServletRequest
 
     override fun loadUserByUsername(username: String): UserDetails {
         if (username.isEmpty()) {
             throw UsernameNotFoundException("Username is empty")
         }
+        val userIp = getClientIP()
 
-        if (loginAttemptService.isBlocked(getClientIP())) {
+        _logger.debug("User trying to log in with ip: [$userIp]")
+        if (loginAttemptService.isBlocked(userIp)) {
             throw TooManyAttemptsException("Too many unsuccessful attempts to log in. Please try later")
         }
 
@@ -57,13 +61,7 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
     }
 
     private fun getClientIP(): String {
-        val attribs = RequestContextHolder.getRequestAttributes()
-        if (attribs is NativeWebRequest) {
-            val request = attribs.nativeRequest as HttpServletRequest
-            _logger.debug("Ip ${request.remoteAddr}")
-            return request.remoteAddr
-        }
-        _logger.debug("Ip is null")
-        return ""
+        val xfHeader: String = request.getHeader("X-Forwarded-For") ?: return request.remoteAddr
+        return xfHeader.split(",").toTypedArray()[0]
     }
 }
