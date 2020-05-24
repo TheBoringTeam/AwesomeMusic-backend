@@ -6,6 +6,7 @@ import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.repositories.IEmailTokenRepository
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
+import com.music.awesomemusic.utils.exceptions.user.AccountNotFoundException
 import org.apache.log4j.Logger
 
 
@@ -40,7 +41,7 @@ class AccountService {
 
     fun findByUsername(username: String): AwesomeAccount {
         return accountRepository.findByUsername(username).orElseThrow {
-            UsernameNotFoundException("Username was not found")
+            AccountNotFoundException("Username was not found")
         }
     }
 

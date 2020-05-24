@@ -2,6 +2,7 @@ package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
+import com.music.awesomemusic.utils.exceptions.user.AccountNotFoundException
 import com.music.awesomemusic.utils.exceptions.user.TooManyAttemptsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +31,7 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
 
     override fun loadUserByUsername(username: String): UserDetails {
         if (username.isEmpty()) {
-            throw UsernameNotFoundException("Username is empty")
+            throw AccountNotFoundException("Username is empty")
         }
 
         if (loginAttemptService.isBlocked(getClientIP())) {
