@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.RequestContextHolder
@@ -27,11 +28,11 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
 
     @Autowired
     lateinit var loginAttemptService: LoginAttemptsService
-    
+
 
     override fun loadUserByUsername(username: String): UserDetails {
         if (username.isEmpty()) {
-            throw AccountNotFoundException("Username is empty")
+            throw UsernameNotFoundException("Username is empty")
         }
 
         if (loginAttemptService.isBlocked(getClientIP())) {
@@ -59,8 +60,10 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
         val attribs = RequestContextHolder.getRequestAttributes()
         if (attribs is NativeWebRequest) {
             val request = attribs.nativeRequest as HttpServletRequest
+            _logger.debug("Ip ${request.remoteAddr}")
             return request.remoteAddr
         }
+        _logger.debug("Ip is null")
         return ""
     }
 }

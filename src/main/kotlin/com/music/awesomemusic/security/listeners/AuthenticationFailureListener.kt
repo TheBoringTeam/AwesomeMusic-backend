@@ -16,7 +16,7 @@ class AuthenticationFailureListener : ApplicationListener<AuthenticationFailureB
     private lateinit var loginAttemptsService: LoginAttemptsService
 
 
-    val logger = Logger.getLogger(AuthenticationFailureListener::class.java.simpleName)
+    private val _logger = Logger.getLogger(AuthenticationFailureListener::class.java.simpleName)
 
     override fun onApplicationEvent(event: AuthenticationFailureBadCredentialsEvent) {
         val context = SecurityContextHolder.getContext()
