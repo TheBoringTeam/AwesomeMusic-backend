@@ -11,10 +11,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.context.request.RequestContextHolder
 import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
+
 
 @Service
 class AccountUserDetailsService : UserDetailsService, Serializable {
@@ -25,9 +27,7 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
 
     @Autowired
     lateinit var loginAttemptService: LoginAttemptsService
-
-    @Autowired
-    private lateinit var request: HttpServletRequest
+    
 
     override fun loadUserByUsername(username: String): UserDetails {
         if (username.isEmpty()) {
@@ -56,7 +56,11 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
     }
 
     private fun getClientIP(): String {
-        val xfHeader: String = request.getHeader("X-Forwarded-For") ?: return request.remoteAddr
-        return xfHeader.split(",").toTypedArray()[0]
+        val attribs = RequestContextHolder.getRequestAttributes()
+        if (attribs is NativeWebRequest) {
+            val request = attribs.nativeRequest as HttpServletRequest
+            return request.remoteAddr
+        }
+        return ""
     }
 }
