@@ -4,11 +4,12 @@ package com.music.awesomemusic.controllers
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.dto.request.AccountLoginForm
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
+import com.music.awesomemusic.persistence.dto.request.ResetPasswordForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
-import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
+import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -149,5 +150,16 @@ class AccountController {
 
         // TODO: Redirect to front-end
         return ResponseEntity<String>("Here should be redirect to frontend", HttpStatus.OK)
+    }
+
+    @PostMapping("/resetPassword")
+    fun resetPassword(@RequestBody(required = true) @Valid resetPasswordForm: ResetPasswordForm, bindingResult: BindingResult)
+            : ResponseEntity<*> {
+        //form validation
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        return ResponseEntity.ok("Fine")
     }
 }

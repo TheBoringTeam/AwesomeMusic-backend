@@ -1,6 +1,7 @@
 package com.music.awesomemusic.utils.listeners
 
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
