@@ -10,13 +10,13 @@ import org.springframework.context.support.ResourceBundleMessageSource
  * Class for some general configuration.
  */
 @Configuration
-public class AppConfig {
+class AppConfig {
 
     @Bean
     @Primary
-    public fun provideMessageSource(): MessageSource {
+    fun provideMessageSource(): MessageSource {
         val source = ResourceBundleMessageSource()
-        source.setBasename("messages/email_en")
+        source.setBasename("messages/account_en")
         source.setUseCodeAsDefaultMessage(true)
 
         return source

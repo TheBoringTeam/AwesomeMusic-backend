@@ -1,9 +1,10 @@
 package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
-import com.music.awesomemusic.persistence.domain.EmailVerificationToken
+import com.music.awesomemusic.persistence.domain.TokenType
+import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.repositories.IAccountRepository
-import com.music.awesomemusic.repositories.IEmailTokenRepository
+import com.music.awesomemusic.repositories.ITokenRepository
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -25,12 +26,12 @@ class AccountEmailTest {
     lateinit var accountRepository: IAccountRepository
 
     @Autowired
-    lateinit var emailTokenRepository: IEmailTokenRepository
+    lateinit var tokenRepository: ITokenRepository
 
 
     @Before
     fun init() {
-        emailTokenRepository.deleteAll()
+        tokenRepository.deleteAll()
         accountRepository.deleteAll()
 
     }
@@ -42,32 +43,32 @@ class AccountEmailTest {
 
 
     @Test
-    fun testCreateEmailVerificationTokenValid(){
-        val account = AwesomeAccount("testUsername","12", "email","name", false )
+    fun testCreateEmailVerificationTokenValid() {
+        val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
         accountService.createEmailVerificationToken(account, "qwerty")
-        val emailToken = emailTokenRepository.findByToken("qwerty")
+        val emailToken = tokenRepository.findByTokenAndTokenType("qwerty", TokenType.REGISTRATION_EMAIL).get()
 
         assertNotNull(emailToken)
-        assertEquals(emailToken?.token,  "qwerty")
+        assertEquals(emailToken.token, "qwerty")
     }
 
 
     @Test
     fun testGetVerificationTokenValid() {
-        val account = AwesomeAccount("testUsername","12", "email","name", false )
+        val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
-        val verificationToken = EmailVerificationToken("q111", account)
-        emailTokenRepository.save(verificationToken)
+        val verificationToken = VerificationToken("q111", account, TokenType.REGISTRATION_EMAIL)
+        tokenRepository.save(verificationToken)
 
         assertNotNull(accountService.getVerificationToken(verificationToken.token))
     }
 
     @Test
     fun testExistsByEmailValid() {
-        val account = AwesomeAccount("testUsername","12", "email","name", false )
+        val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
         assertEquals(true, accountService.existsByEmail(account.email))

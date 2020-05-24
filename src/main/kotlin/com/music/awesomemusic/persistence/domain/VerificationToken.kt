@@ -4,13 +4,16 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "email_tokens")
-class EmailVerificationToken(
+@Table(name = "tokens")
+class VerificationToken(
         @Column(name = "token")
         val token: String,
 
         @OneToOne(targetEntity = AwesomeAccount::class, fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
-        @JoinColumn(nullable = false, name = "account_id") val account: AwesomeAccount
+        @JoinColumn(nullable = false, name = "account_id") val account: AwesomeAccount,
+
+        @Column(name = "tokenType", nullable = false)
+        val tokenType: TokenType
 ) {
     @Transient
     private val EXPIRATION = 60 * 24

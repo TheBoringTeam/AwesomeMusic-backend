@@ -2,7 +2,7 @@ package com.music.awesomemusic
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.repositories.IAccountRepository
-import com.music.awesomemusic.repositories.IEmailTokenRepository
+import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.services.AccountService
 import junit.framework.Assert.assertEquals
 import org.junit.Before
@@ -25,13 +25,13 @@ class AwesomeMusicApplicationTests {
     lateinit var accountRepository: IAccountRepository
 
     @Autowired
-    lateinit var emailTokenRepository: IEmailTokenRepository
+    lateinit var tokenRepository: ITokenRepository
 
 
     @Before
     fun init() {
         accountRepository.deleteAll()
-        emailTokenRepository.deleteAll()
+        tokenRepository.deleteAll()
     }
 
 
