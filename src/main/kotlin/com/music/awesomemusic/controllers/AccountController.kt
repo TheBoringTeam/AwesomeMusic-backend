@@ -2,11 +2,13 @@ package com.music.awesomemusic.controllers
 
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
+import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.persistence.dto.request.AccountLoginForm
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.persistence.dto.request.ResetPasswordForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.utils.events.OnPasswordResetEvent
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
 import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
@@ -125,12 +127,12 @@ class AccountController {
     @GetMapping("/registrationConfirm")
     fun registrationConfirm(@RequestParam("token") token: String, request: WebRequest): ResponseEntity<*> {
         val locale = request.locale
+        val verificationToken: VerificationToken
 
-        val verificationToken = accountService.getVerificationToken(token)
-
-        if (verificationToken == null) {
+        try {
+            verificationToken = accountService.getVerificationToken(token)
+        } catch (e: ResourceNotFoundException) { // if token is not present in database
             val message = messages.getMessage("auth.message.invalid", null, locale)
-
             // TODO : Redirect to front end
             return ResponseEntity<String>(message, HttpStatus.OK)
         }
@@ -139,7 +141,7 @@ class AccountController {
 
         val cal = Calendar.getInstance()
 
-        if (verificationToken.expiryDate.time - cal.time.time <= 0) {
+        if (verificationToken.expiryDate.time - cal.time.time <= 0) { // if token is expired
             val message = messages.getMessage("auth.message.expired", null, locale)
             // TODO : Redirect to front end
             return ResponseEntity<String>(message, HttpStatus.OK)
@@ -153,13 +155,16 @@ class AccountController {
     }
 
     @PostMapping("/resetPassword")
-    fun resetPassword(@RequestBody(required = true) @Valid resetPasswordForm: ResetPasswordForm, bindingResult: BindingResult)
-            : ResponseEntity<*> {
+    fun resetPassword(@RequestBody(required = true) @Valid resetPasswordForm: ResetPasswordForm, bindingResult: BindingResult,
+                      request: HttpServletRequest): ResponseEntity<*> {
         //form validation
         if (bindingResult.hasErrors()) {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
-        return ResponseEntity.ok("Fine")
+        val account = accountService.findByEmail(resetPasswordForm.email)
+
+        applicationEventPublisher.publishEvent(OnPasswordResetEvent(account, request.locale, request.contextPath))
+        return ResponseEntity<String>(HttpStatus.OK)
     }
 }
