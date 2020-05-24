@@ -41,7 +41,7 @@ class AccountService {
 
     fun findByUsername(username: String): AwesomeAccount {
         return accountRepository.findByUsername(username).orElseThrow {
-            AccountNotFoundException("Username was not found")
+            UsernameNotFoundException("Username was not found")
         }
     }
 
@@ -84,6 +84,6 @@ class AccountService {
     }
 
     fun findByEmail(email: String): AwesomeAccount {
-        return accountRepository.findByEmail(email).orElseThrow { ResourceNotFoundException("User with such email doesn't exist") }
+        return accountRepository.findByEmail(email).orElseThrow { ResourceNotFoundException("User with email [${email}] doesn't exist") }
     }
 }
