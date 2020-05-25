@@ -53,7 +53,7 @@ class PasswordResetListener : ApplicationListener<OnPasswordResetEvent> {
         val subject = "AwesomeMusic - Password Reset"
 
         // TODO: Here should be link to frontend
-        val messageUrl = "http://redirect.to.front"
+        val messageUrl = "http://redirect.to.front?token=${token}"
 
         var message = messages.getMessage("message.resetPassword", null, null, event.locale)
 

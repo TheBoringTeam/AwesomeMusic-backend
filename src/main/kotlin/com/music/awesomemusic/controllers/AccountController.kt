@@ -170,7 +170,7 @@ class AccountController {
         return ResponseEntity<String>(HttpStatus.OK)
     }
 
-    @PostMapping("/confirmResetPassword")
+    @PostMapping("/resetPasswordConfirm")
     fun confirmResetPassword(@RequestBody @Valid resetPasswordConfirmForm: ResetPasswordConfirmForm, bindingResult: BindingResult,
                              request: HttpServletRequest): ResponseEntity<*> {
         if (bindingResult.hasErrors()) {
@@ -178,7 +178,6 @@ class AccountController {
         }
 
         val verificationToken: VerificationToken
-
         try {
             verificationToken = tokenService.getResetPasswordToken(resetPasswordConfirmForm.token)
         } catch (e: ResourceNotFoundException) { // if token is not present in database
@@ -188,17 +187,14 @@ class AccountController {
         }
 
         val account = verificationToken.account
-
         if (tokenService.isTokenExpired(verificationToken)) { // if token is expired
             val message = messages.getMessage("auth.message.expired", null, request.locale)
             // TODO : Redirect to front end
             return ResponseEntity<String>(message, HttpStatus.OK)
         }
 
-        account.password = resetPasswordConfirmForm.password
-
-        accountService.saveAccount(account)
-
+        accountService.setPassword(account, resetPasswordConfirmForm.password)
+        tokenService.delete(verificationToken)
         return ResponseEntity.ok("Password was reset")
     }
 }

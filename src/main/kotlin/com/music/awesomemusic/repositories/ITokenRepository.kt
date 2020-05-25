@@ -8,5 +8,7 @@ import java.util.*
 
 @Repository
 interface ITokenRepository : CrudRepository<VerificationToken, Long> {
-    fun findByTokenAndTokenType(token : String, tokenType: TokenType) : Optional<VerificationToken>
+    fun findByTokenAndTokenType(token: String, tokenType: TokenType): Optional<VerificationToken>
+
+    fun deleteByToken(token: String)
 }

@@ -67,6 +67,11 @@ class AccountService {
         return accountRepository.existsByUsername(username)
     }
 
+    fun setPassword(account: AwesomeAccount, newPassword: String) {
+        account.password = passwordEncoder.encode(newPassword)
+        saveAccount(account)
+    }
+
     fun findByEmail(email: String): AwesomeAccount {
         return accountRepository.findByEmail(email).orElseThrow { ResourceNotFoundException("User with email [${email}] doesn't exist") }
     }

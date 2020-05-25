@@ -37,4 +37,12 @@ class TokenService {
         val passwordResetToken = VerificationToken(token, account, TokenType.PASSWORD_RESET)
         tokenRepository.save(passwordResetToken)
     }
+
+    fun deleteByToken(token: String) {
+        tokenRepository.deleteByToken(token)
+    }
+
+    fun delete(token: VerificationToken) {
+        tokenRepository.delete(token)
+    }
 }
