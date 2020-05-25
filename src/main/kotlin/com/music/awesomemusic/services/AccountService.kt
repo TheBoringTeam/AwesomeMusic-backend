@@ -1,15 +1,11 @@
 package com.music.awesomemusic.services
 
+
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
-import com.music.awesomemusic.persistence.domain.EmailVerificationToken
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
-import com.music.awesomemusic.repositories.IEmailTokenRepository
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
-import com.music.awesomemusic.utils.exceptions.user.AccountNotFoundException
 import org.apache.log4j.Logger
-
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -30,9 +26,6 @@ class AccountService {
 
     @Autowired
     lateinit var roleService: RoleService
-
-    @Autowired
-    lateinit var emailTokenRepository: IEmailTokenRepository
 
     @Autowired
     @Lazy
@@ -62,17 +55,8 @@ class AccountService {
         }
     }
 
-    fun createEmailVerificationToken(account: AwesomeAccount, token: String) {
-        val verificationToken = EmailVerificationToken(token, account)
-        emailTokenRepository.save(verificationToken)
-    }
-
     fun saveAccount(account: AwesomeAccount) {
         accountRepository.save(account)
-    }
-
-    fun getVerificationToken(token: String): EmailVerificationToken? {
-        return emailTokenRepository.findByToken(token)
     }
 
     fun existsByEmail(email: String): Boolean {
@@ -81,6 +65,11 @@ class AccountService {
 
     fun existsByUsername(username: String): Boolean {
         return accountRepository.existsByUsername(username)
+    }
+
+    fun setPassword(account: AwesomeAccount, newPassword: String) {
+        account.password = passwordEncoder.encode(newPassword)
+        saveAccount(account)
     }
 
     fun findByEmail(email: String): AwesomeAccount {
