@@ -5,9 +5,11 @@ import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.persistence.dto.request.AccountLoginForm
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
+import com.music.awesomemusic.persistence.dto.request.ResetPasswordConfirmForm
 import com.music.awesomemusic.persistence.dto.request.ResetPasswordForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.services.TokenService
 import com.music.awesomemusic.utils.events.OnPasswordResetEvent
 import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
@@ -28,7 +30,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
@@ -47,6 +48,9 @@ class AccountController {
 
     @Autowired
     lateinit var accountService: AccountService
+
+    @Autowired
+    lateinit var tokenService: TokenService
 
     @Autowired
     lateinit var messages: MessageSource
@@ -130,7 +134,7 @@ class AccountController {
         val verificationToken: VerificationToken
 
         try {
-            verificationToken = accountService.getVerificationToken(token)
+            verificationToken = tokenService.getEmailVerificationToken(token)
         } catch (e: ResourceNotFoundException) { // if token is not present in database
             val message = messages.getMessage("auth.message.invalid", null, locale)
             // TODO : Redirect to front end
@@ -139,9 +143,7 @@ class AccountController {
 
         val account = verificationToken.account
 
-        val cal = Calendar.getInstance()
-
-        if (verificationToken.expiryDate.time - cal.time.time <= 0) { // if token is expired
+        if (tokenService.isTokenExpired(verificationToken)) { // if token is expired
             val message = messages.getMessage("auth.message.expired", null, locale)
             // TODO : Redirect to front end
             return ResponseEntity<String>(message, HttpStatus.OK)
@@ -166,5 +168,37 @@ class AccountController {
 
         applicationEventPublisher.publishEvent(OnPasswordResetEvent(account, request.locale, request.contextPath))
         return ResponseEntity<String>(HttpStatus.OK)
+    }
+
+    @PostMapping("/confirmResetPassword")
+    fun confirmResetPassword(@RequestBody @Valid resetPasswordConfirmForm: ResetPasswordConfirmForm, bindingResult: BindingResult,
+                             request: HttpServletRequest): ResponseEntity<*> {
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        val verificationToken: VerificationToken
+
+        try {
+            verificationToken = tokenService.getResetPasswordToken(resetPasswordConfirmForm.token)
+        } catch (e: ResourceNotFoundException) { // if token is not present in database
+            val message = messages.getMessage("auth.message.invalid", null, request.locale)
+            // TODO : Redirect to front end
+            return ResponseEntity<String>(message, HttpStatus.OK)
+        }
+
+        val account = verificationToken.account
+
+        if (tokenService.isTokenExpired(verificationToken)) { // if token is expired
+            val message = messages.getMessage("auth.message.expired", null, request.locale)
+            // TODO : Redirect to front end
+            return ResponseEntity<String>(message, HttpStatus.OK)
+        }
+
+        account.password = resetPasswordConfirmForm.password
+
+        accountService.saveAccount(account)
+
+        return ResponseEntity.ok("Password was reset")
     }
 }

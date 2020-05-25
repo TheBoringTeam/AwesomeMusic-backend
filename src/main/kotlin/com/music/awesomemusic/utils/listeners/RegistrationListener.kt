@@ -1,6 +1,7 @@
 package com.music.awesomemusic.utils.listeners
 
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.services.TokenService
 import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +20,9 @@ class RegistrationListener : ApplicationListener<OnRegistrationCompleteEvent> {
 
     @Autowired
     lateinit var accountService: AccountService
+
+    @Autowired
+    lateinit var tokenService: TokenService
 
     @Autowired
     lateinit var messages: MessageSource
@@ -43,7 +47,7 @@ class RegistrationListener : ApplicationListener<OnRegistrationCompleteEvent> {
     private fun confirmRegistration(event: OnRegistrationCompleteEvent) {
         val account = event.account
         val token = UUID.randomUUID().toString()
-        accountService.createEmailVerificationToken(account, token)
+        tokenService.createEmailVerificationToken(account, token)
 
         val recipientAddress = account.email
 

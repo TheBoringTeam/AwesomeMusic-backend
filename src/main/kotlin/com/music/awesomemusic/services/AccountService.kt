@@ -1,15 +1,11 @@
 package com.music.awesomemusic.services
 
+
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
-import com.music.awesomemusic.persistence.domain.VerificationToken
-import com.music.awesomemusic.persistence.domain.TokenType
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
-import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import org.apache.log4j.Logger
-
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -30,9 +26,6 @@ class AccountService {
 
     @Autowired
     lateinit var roleService: RoleService
-
-    @Autowired
-    lateinit var tokenRepository: ITokenRepository
 
     @Autowired
     @Lazy
@@ -62,26 +55,8 @@ class AccountService {
         }
     }
 
-    fun createEmailVerificationToken(account: AwesomeAccount, token: String) {
-        val emailVerificationToken = VerificationToken(token, account, TokenType.REGISTRATION_EMAIL)
-        tokenRepository.save(emailVerificationToken)
-    }
-
-    fun createPasswordResetToken(account: AwesomeAccount, token: String) {
-        val passwordResetToken = VerificationToken(token, account, TokenType.PASSWORD_RESET)
-        tokenRepository.save(passwordResetToken)
-    }
-
     fun saveAccount(account: AwesomeAccount) {
         accountRepository.save(account)
-    }
-
-    fun getVerificationToken(token: String): VerificationToken {
-        return tokenRepository.findByTokenAndTokenType(token, TokenType.REGISTRATION_EMAIL).orElseThrow { ResourceNotFoundException("Email token was not found") }
-    }
-
-    fun getResetPasswordToken(token: String): VerificationToken {
-        return tokenRepository.findByTokenAndTokenType(token, TokenType.PASSWORD_RESET).orElseThrow { ResourceNotFoundException("Password reset token was not found") }
     }
 
     fun existsByEmail(email: String): Boolean {

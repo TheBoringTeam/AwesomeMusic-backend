@@ -1,6 +1,7 @@
 package com.music.awesomemusic.utils.listeners
 
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.services.TokenService
 import com.music.awesomemusic.utils.events.OnPasswordResetEvent
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +20,9 @@ class PasswordResetListener : ApplicationListener<OnPasswordResetEvent> {
 
     @Autowired
     lateinit var accountService: AccountService
+
+    @Autowired
+    lateinit var tokenService: TokenService
 
     @Autowired
     lateinit var messages: MessageSource
@@ -42,7 +46,7 @@ class PasswordResetListener : ApplicationListener<OnPasswordResetEvent> {
     fun sendPasswordResetEmail(event: OnPasswordResetEvent) {
         val account = event.account
         val token = UUID.randomUUID().toString()
-        accountService.createPasswordResetToken(account, token)
+        tokenService.createPasswordResetToken(account, token)
 
         val recipientAddress = account.email
 

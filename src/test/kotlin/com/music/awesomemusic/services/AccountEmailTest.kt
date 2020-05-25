@@ -26,6 +26,9 @@ class AccountEmailTest {
     lateinit var accountRepository: IAccountRepository
 
     @Autowired
+    lateinit var tokenService: TokenService
+
+    @Autowired
     lateinit var tokenRepository: ITokenRepository
 
 
@@ -47,7 +50,7 @@ class AccountEmailTest {
         val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
-        accountService.createEmailVerificationToken(account, "qwerty")
+        tokenService.createEmailVerificationToken(account, "qwerty")
         val emailToken = tokenRepository.findByTokenAndTokenType("qwerty", TokenType.REGISTRATION_EMAIL).get()
 
         assertNotNull(emailToken)
@@ -63,7 +66,7 @@ class AccountEmailTest {
         val verificationToken = VerificationToken("q111", account, TokenType.REGISTRATION_EMAIL)
         tokenRepository.save(verificationToken)
 
-        assertNotNull(accountService.getVerificationToken(verificationToken.token))
+        assertNotNull(tokenService.getEmailVerificationToken(verificationToken.token))
     }
 
     @Test
