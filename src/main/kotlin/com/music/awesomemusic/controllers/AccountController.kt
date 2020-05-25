@@ -9,9 +9,9 @@ import com.music.awesomemusic.persistence.dto.request.ResetPasswordForm
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.utils.events.OnPasswordResetEvent
+import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
-import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired

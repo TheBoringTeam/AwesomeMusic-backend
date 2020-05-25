@@ -46,7 +46,7 @@ class PasswordResetListener : ApplicationListener<OnPasswordResetEvent> {
 
         val recipientAddress = account.email
 
-        val subject = "AwesomeMusic - Email Confirmation"
+        val subject = "AwesomeMusic - Password Reset"
 
         // TODO: Here should be link to frontend
         val messageUrl = "http://redirect.to.front"
