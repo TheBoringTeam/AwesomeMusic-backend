@@ -3,10 +3,7 @@ package com.music.awesomemusic.controllers
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.domain.VerificationToken
-import com.music.awesomemusic.persistence.dto.request.AccountLoginForm
-import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
-import com.music.awesomemusic.persistence.dto.request.ResetPasswordConfirmForm
-import com.music.awesomemusic.persistence.dto.request.ResetPasswordForm
+import com.music.awesomemusic.persistence.dto.request.*
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.services.TokenService
@@ -196,5 +193,15 @@ class AccountController {
         accountService.setPassword(account, resetPasswordConfirmForm.password)
         tokenService.delete(verificationToken)
         return ResponseEntity.ok("Password was reset")
+    }
+
+    @PutMapping("/changePassword")
+    fun changePassword(@RequestBody(required = true) @Valid changePasswordForm: ChangePasswordForm, bindingResult: BindingResult,
+                       request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        return ResponseEntity.ok(userDetails.password)
     }
 }

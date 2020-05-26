@@ -5,6 +5,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.support.ResourceBundleMessageSource
+import org.springframework.web.context.request.RequestContextListener
+
+
+
 
 /**
  * Class for some general configuration.
@@ -20,6 +24,11 @@ class AppConfig {
         source.setUseCodeAsDefaultMessage(true)
 
         return source
+    }
+
+    @Bean
+    fun requestContextListener(): RequestContextListener? {
+        return RequestContextListener()
     }
 
 }
