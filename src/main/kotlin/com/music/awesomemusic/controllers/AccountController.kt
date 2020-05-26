@@ -4,6 +4,7 @@ package com.music.awesomemusic.controllers
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.persistence.dto.request.*
+import com.music.awesomemusic.persistence.dto.response.BadRequestResponse
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.services.TokenService
@@ -198,10 +199,18 @@ class AccountController {
     @PutMapping("/changePassword")
     fun changePassword(@RequestBody(required = true) @Valid changePasswordForm: ChangePasswordForm, bindingResult: BindingResult,
                        request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
+        //form validation
         if (bindingResult.hasErrors()) {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
-        return ResponseEntity.ok(userDetails.password)
+        val account = accountService.findByUsername(userDetails.username)
+        if (!accountService.isPasswordEquals(changePasswordForm.oldPassword, account)) {
+            return ResponseEntity.badRequest().body(BadRequestResponse("Old password is not correct", request.servletPath))
+        }
+
+        accountService.setPassword(account, changePasswordForm.newPassword)
+
+        return ResponseEntity.ok().body("Password was successfully changed")
     }
 }

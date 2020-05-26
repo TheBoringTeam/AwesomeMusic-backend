@@ -1,7 +1,6 @@
 package com.music.awesomemusic.utils.validators.annotations
 
 import com.music.awesomemusic.utils.validators.logic.ExistsEmailValidator
-import com.music.awesomemusic.utils.validators.logic.UniqueEmailValidator
 import javax.validation.Constraint
 import kotlin.reflect.KClass
 

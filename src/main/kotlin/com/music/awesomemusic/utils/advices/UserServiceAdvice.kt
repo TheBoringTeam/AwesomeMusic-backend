@@ -1,8 +1,6 @@
 package com.music.awesomemusic.utils.advices
 
-import com.music.awesomemusic.persistence.dto.response.BadRequestResponse
 import com.music.awesomemusic.persistence.dto.response.ErrorResponse
-import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
 import org.apache.log4j.Logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
