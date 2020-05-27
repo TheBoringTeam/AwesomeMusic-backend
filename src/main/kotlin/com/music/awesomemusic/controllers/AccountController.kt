@@ -213,4 +213,8 @@ class AccountController {
 
         return ResponseEntity.ok().body("Password was successfully changed")
     }
+
+    @PutMapping("/updateAccount")
+    fun updateAccount() {
+    }
 }
