@@ -2,7 +2,7 @@ package com.music.awesomemusic.persistence.domain
 
 import javax.persistence.*
 
-@Entity
+@Entity(name="awesome_language")
 class Language(
         @Column(name = "language_code", unique = true, nullable = false)
         val languageCode: String,

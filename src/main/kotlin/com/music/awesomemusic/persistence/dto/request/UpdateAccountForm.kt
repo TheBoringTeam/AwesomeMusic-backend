@@ -4,13 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.music.awesomemusic.persistence.domain.Education
 import com.music.awesomemusic.persistence.domain.Gender
-import com.music.awesomemusic.persistence.domain.Language
 import java.util.*
 
 data class UpdateAccountForm @JsonCreator constructor(
-        @JsonProperty("username")
-        val username: String?,
-
         @JsonProperty("name")
         val name: String?,
 
@@ -29,6 +25,9 @@ data class UpdateAccountForm @JsonCreator constructor(
         @JsonProperty("education")
         val education: Education?,
 
-        @JsonProperty("country_id")
-        val language: Language?
+        @JsonProperty("language_code")
+        val language: String?,
+
+        @JsonProperty("country_code")
+        val country: String?
 )
