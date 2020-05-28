@@ -215,6 +215,12 @@ class AccountController {
     }
 
     @PutMapping("/updateAccount")
-    fun updateAccount() {
+    fun updateAccount(@RequestBody @Valid updateAccountForm: UpdateAccountForm, bindingResult: BindingResult,
+                      request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
+        //form validation
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+        return ResponseEntity.ok("fine")
     }
 }
