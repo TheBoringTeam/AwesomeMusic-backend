@@ -6,7 +6,6 @@ import com.music.awesomemusic.persistence.domain.Education
 import com.music.awesomemusic.persistence.domain.Gender
 import com.music.awesomemusic.utils.validators.annotations.ExistsLanguageCode
 import java.util.*
-import javax.validation.constraints.Size
 
 data class UpdateAccountForm @JsonCreator constructor(
         @JsonProperty("name")
@@ -28,7 +27,7 @@ data class UpdateAccountForm @JsonCreator constructor(
         val education: Education?,
 
         @JsonProperty("language_code")
-        @field:Size(min = 2, max = 2, message = "Language code has to be 2 chars length")
+        @ExistsLanguageCode
         val language: String?,
 
         @JsonProperty("country_code")
