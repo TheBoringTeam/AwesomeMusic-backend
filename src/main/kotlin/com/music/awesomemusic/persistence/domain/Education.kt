@@ -7,5 +7,5 @@ enum class Education(education: String) {
     SECONDARY("Secondary"),
     BACHELOR("Bachelor"),
     MASTER("Master"),
-    DOCTORAL("Doctoral")
+    DOCTORAL("Doctoral");
 }
