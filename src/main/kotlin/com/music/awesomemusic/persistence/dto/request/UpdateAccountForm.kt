@@ -6,6 +6,7 @@ import com.music.awesomemusic.persistence.domain.Education
 import com.music.awesomemusic.persistence.domain.Gender
 import com.music.awesomemusic.utils.validators.annotations.ExistsCountryCode
 import com.music.awesomemusic.utils.validators.annotations.ExistsEducation
+import com.music.awesomemusic.utils.validators.annotations.ExistsGender
 import com.music.awesomemusic.utils.validators.annotations.ExistsLanguageCode
 import java.util.*
 
@@ -23,6 +24,7 @@ data class UpdateAccountForm @JsonCreator constructor(
         val deathday: Date?,
 
         @JsonProperty("gender")
+        @ExistsGender
         val gender: Gender?,
 
         @JsonProperty("education")
