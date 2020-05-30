@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ILanguageRepository : CrudRepository<Language, Long> {
     fun existsByLanguageCode(languageCode: String): Boolean
+    override fun findAll(): List<Language>
 }

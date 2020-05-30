@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext
 class ExistsEducationNameValidator : ConstraintValidator<ExistsEducation, String> {
 
     private val _logger = Logger.getLogger(ExistsEducationNameValidator::class.java)
-    
+
     override fun isValid(value: String?, context: ConstraintValidatorContext?): Boolean {
         value?.let { educationName ->
             return Education.values().any { it.name == educationName.toUpperCase() }

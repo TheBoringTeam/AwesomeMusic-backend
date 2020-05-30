@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface ICountryRepository : CrudRepository<Country, Long> {
     fun existsByCountryCode(countryCode: String): Boolean
+    override fun findAll() : List<Country>
 }
