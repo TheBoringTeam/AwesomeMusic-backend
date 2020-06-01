@@ -10,9 +10,10 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -40,6 +41,9 @@ class AccountControllerTest {
     @Test
     @Throws(Exception::class)
     fun helloShouldReturn403() {
-        mockMvc.perform(get("/api/user/hello")).andDo(print()).andExpect(status().`is`(403))
+        mockMvc.perform(post("/api/user/sign-in")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"login\": \"holker\", \"password\": \"12412412512\" }")
+        ).andDo(print()).andExpect(status().`is`(403))
     }
 }

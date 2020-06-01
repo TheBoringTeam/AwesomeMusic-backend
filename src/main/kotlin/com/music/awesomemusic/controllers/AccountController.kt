@@ -221,6 +221,10 @@ class AccountController {
         if (bindingResult.hasErrors()) {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
+
+
+
+
         return ResponseEntity.ok("fine")
     }
 }

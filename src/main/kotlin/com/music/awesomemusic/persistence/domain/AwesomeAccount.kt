@@ -1,6 +1,7 @@
 package com.music.awesomemusic.persistence.domain
 
 import java.net.URL
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
@@ -33,10 +34,10 @@ class AwesomeAccount(
     var biography: String = ""
 
     @Column(name = "birthday", nullable = true)
-    var birthday: Date? = null
+    var birthday: LocalDate? = null
 
     @Column(name = "deathday", nullable = true)
-    var deathDay: Date? = null
+    var deathDay: LocalDate? = null
 
     @Column(name = "gender", nullable = true)
     var gender: Gender? = null

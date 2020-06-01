@@ -1,7 +1,5 @@
 package com.music.awesomemusic.controllers
 
-import com.music.awesomemusic.persistence.domain.Country
-import com.music.awesomemusic.persistence.domain.Language
 import com.music.awesomemusic.persistence.dto.response.CountryResponse
 import com.music.awesomemusic.persistence.dto.response.LanguageResponse
 import com.music.awesomemusic.services.InformationService
@@ -20,14 +18,14 @@ class InformationController {
 
     @GetMapping("/languages")
     fun getAllLanguage(): ResponseEntity<List<LanguageResponse>> {
-        return ResponseEntity.ok(informationService.getAllLanguages().map {
+        return ResponseEntity.ok(informationService.findAllLanguages().map {
             LanguageResponse(it.languageName, it.languageCode)
         })
     }
 
     @GetMapping("/countries")
     fun getAllCountries(): ResponseEntity<List<CountryResponse>> {
-        return ResponseEntity.ok(informationService.getAllCountries().map {
+        return ResponseEntity.ok(informationService.findAllCountries().map {
             CountryResponse(it.countryName, it.countryCode)
         })
     }

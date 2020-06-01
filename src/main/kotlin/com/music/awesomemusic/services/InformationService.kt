@@ -4,6 +4,7 @@ import com.music.awesomemusic.persistence.domain.Country
 import com.music.awesomemusic.persistence.domain.Language
 import com.music.awesomemusic.repositories.ICountryRepository
 import com.music.awesomemusic.repositories.ILanguageRepository
+import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -15,7 +16,7 @@ class InformationService {
     @Autowired
     private lateinit var countryRepository: ICountryRepository
 
-    fun getLanguageCodes(): List<String> {
+    fun findLanguageCodes(): List<String> {
         return languageRepository.findAll().map { it.languageCode }
     }
 
@@ -27,11 +28,19 @@ class InformationService {
         return countryRepository.existsByCountryCode(countryCode)
     }
 
-    fun getAllLanguages(): List<Language> {
+    fun findAllLanguages(): List<Language> {
         return languageRepository.findAll()
     }
 
-    fun getAllCountries(): List<Country> {
+    fun findAllCountries(): List<Country> {
         return countryRepository.findAll()
+    }
+
+    fun findCountryByCode(code: String): Country {
+        return countryRepository.findByCountryCode(code).orElseThrow { ResourceNotFoundException("There is no country with this code") }
+    }
+
+    fun findLanguageByCode(code: String): Language {
+        return languageRepository.findByLanguageCode(code).orElseThrow { ResourceNotFoundException("There is no language with this code") }
     }
 }
