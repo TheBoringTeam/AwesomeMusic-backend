@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * Service for account management.
@@ -108,11 +110,11 @@ class AccountService {
         }
 
         updateForm.birthday?.let {
-            //TODO: Convert date and set to profile
+            account.birthday = LocalDate.parse(it, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         }
 
         updateForm.deathday?.let {
-            //TODO: Convert date and set to profile
+            account.deathDay = LocalDate.parse(it, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         }
 
         saveAccount(account)

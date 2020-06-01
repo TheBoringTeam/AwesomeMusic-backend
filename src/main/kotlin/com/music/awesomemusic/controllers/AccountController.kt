@@ -222,9 +222,10 @@ class AccountController {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
+        // update account
+        val account = accountService.findByUsername(userDetails.username)
+        accountService.updateAll(updateAccountForm, account)
 
-
-
-        return ResponseEntity.ok("fine")
+        return ResponseEntity.ok("Fine")
     }
 }
