@@ -1,6 +1,8 @@
 package com.music.awesomemusic.persistence.domain
 
-//'unknown', 'male', 'female', 'other'
-enum class Gender {
-    UNKNOWN, MALE, FEMALE, OTHER
+enum class Gender(val gender: String) {
+    UNKNOWN("Unknown"),
+    MALE("Male"),
+    FEMALE("Female"),
+    OTHER("Other")
 }

@@ -1,6 +1,5 @@
 package com.music.awesomemusic.persistence.dto.response
 
-import org.springframework.http.HttpStatus
 import java.sql.Timestamp
 import java.util.*
 

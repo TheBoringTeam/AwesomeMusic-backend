@@ -2,7 +2,6 @@ package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
-import com.music.awesomemusic.utils.exceptions.user.AccountNotFoundException
 import com.music.awesomemusic.utils.exceptions.user.TooManyAttemptsException
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import org.springframework.web.context.request.NativeWebRequest
-import org.springframework.web.context.request.RequestContextHolder
 import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
 

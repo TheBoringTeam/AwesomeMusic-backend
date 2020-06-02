@@ -38,7 +38,7 @@ class JwtTokenProvider {
         val claims = Jwts.claims().setSubject(username)
         claims["roles"] = roles
         val now = Date()
-        val validity = Date(now.getTime() + validityInMilliseconds)
+        val validity = Date(now.time + validityInMilliseconds)
         return Jwts.builder() //
                 .setClaims(claims) //
                 .setIssuedAt(now) //
