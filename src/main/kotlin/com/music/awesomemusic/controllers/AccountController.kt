@@ -5,6 +5,7 @@ import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.persistence.dto.request.*
 import com.music.awesomemusic.persistence.dto.response.BadRequestResponse
+import com.music.awesomemusic.persistence.dto.response.BasicStringResponse
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.services.TokenService
@@ -82,7 +83,7 @@ class AccountController {
         // send registration mail via event
         applicationEventPublisher.publishEvent(OnRegistrationCompleteEvent(account, request.locale, request.contextPath))
 
-        return ResponseEntity<String>(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED).body(BasicStringResponse("Account was successfully created"))
     }
 
     @PostMapping("/sign-in")
@@ -151,7 +152,7 @@ class AccountController {
         accountService.saveAccount(account)
 
         // TODO: Redirect to front-end
-        return ResponseEntity<String>("Here should be redirect to frontend", HttpStatus.OK)
+        return ResponseEntity.ok(BasicStringResponse("Here should be redirect to frontend"))
     }
 
     @PostMapping("/resetPassword")
@@ -165,7 +166,7 @@ class AccountController {
         val account = accountService.findByEmail(resetPasswordForm.email)
 
         applicationEventPublisher.publishEvent(OnPasswordResetEvent(account, request.locale, request.contextPath))
-        return ResponseEntity<String>(HttpStatus.OK)
+        return ResponseEntity.ok(BasicStringResponse("Reset password order was accepted"))
     }
 
     @PostMapping("/resetPasswordConfirm")
@@ -193,7 +194,7 @@ class AccountController {
 
         accountService.setPassword(account, resetPasswordConfirmForm.password)
         tokenService.delete(verificationToken)
-        return ResponseEntity.ok("Password was reset")
+        return ResponseEntity.ok(BasicStringResponse("Password was successfully reset"))
     }
 
     @PutMapping("/changePassword")
@@ -211,7 +212,7 @@ class AccountController {
 
         accountService.setPassword(account, changePasswordForm.newPassword)
 
-        return ResponseEntity.ok().body("Password was successfully changed")
+        return ResponseEntity.ok().body(BasicStringResponse("Password was successfully changed"))
     }
 
     @PutMapping("/updateAccount")
@@ -226,6 +227,6 @@ class AccountController {
         val account = accountService.findByUsername(userDetails.username)
         accountService.updateAll(updateAccountForm, account)
 
-        return ResponseEntity.ok("Fine")
+        return ResponseEntity.ok(BasicStringResponse("Account was successfully update"))
     }
 }
