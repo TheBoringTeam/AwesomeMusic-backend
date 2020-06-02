@@ -68,6 +68,7 @@ class AccountController {
     }
 
     @PostMapping("/registration")
+    @ResponseBody
     fun register(@Valid @RequestBody accountSignUpForm: AccountSignUpForm, bindingResult: BindingResult,
                  request: HttpServletRequest): ResponseEntity<*> {
         _logger.debug("Start register process")
@@ -87,6 +88,7 @@ class AccountController {
     }
 
     @PostMapping("/sign-in")
+    @ResponseBody
     fun signIn(@RequestBody(required = true) @Valid accountLoginForm: AccountLoginForm, bindingResult: BindingResult): ResponseEntity<*> {
         _logger.debug("Start sign in process")
 
@@ -116,6 +118,7 @@ class AccountController {
     }
 
     @GetMapping("/me")
+    @ResponseBody
     fun me(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
         val account = accountService.findByUsername(userDetails.username)
 
@@ -128,6 +131,7 @@ class AccountController {
     }
 
     @GetMapping("/registrationConfirm")
+    @ResponseBody
     fun registrationConfirm(@RequestParam("token") token: String, request: WebRequest): ResponseEntity<*> {
         val locale = request.locale
         val verificationToken: VerificationToken
@@ -156,6 +160,7 @@ class AccountController {
     }
 
     @PostMapping("/resetPassword")
+    @ResponseBody
     fun resetPassword(@RequestBody(required = true) @Valid resetPasswordForm: ResetPasswordForm, bindingResult: BindingResult,
                       request: HttpServletRequest): ResponseEntity<*> {
         //form validation
@@ -170,6 +175,7 @@ class AccountController {
     }
 
     @PostMapping("/resetPasswordConfirm")
+    @ResponseBody
     fun confirmResetPassword(@RequestBody @Valid resetPasswordConfirmForm: ResetPasswordConfirmForm, bindingResult: BindingResult,
                              request: HttpServletRequest): ResponseEntity<*> {
         if (bindingResult.hasErrors()) {
@@ -198,6 +204,7 @@ class AccountController {
     }
 
     @PutMapping("/changePassword")
+    @ResponseBody
     fun changePassword(@RequestBody(required = true) @Valid changePasswordForm: ChangePasswordForm, bindingResult: BindingResult,
                        request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
         //form validation
@@ -216,6 +223,7 @@ class AccountController {
     }
 
     @PutMapping("/updateAccount")
+    @ResponseBody
     fun updateAccount(@RequestBody @Valid updateAccountForm: UpdateAccountForm, bindingResult: BindingResult,
                       request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
         //form validation
