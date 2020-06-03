@@ -130,7 +130,7 @@ class AccountController {
                 .toJSON()
     }
 
-    @GetMapping("/registrationConfirm")
+    @GetMapping("/registration-confirm")
     @ResponseBody
     fun registrationConfirm(@RequestParam("token") token: String, request: WebRequest): ResponseEntity<*> {
         val locale = request.locale
@@ -159,7 +159,7 @@ class AccountController {
         return ResponseEntity.ok(BasicStringResponse("Here should be redirect to frontend"))
     }
 
-    @PostMapping("/resetPassword")
+    @PostMapping("/reset-password")
     @ResponseBody
     fun resetPassword(@RequestBody(required = true) @Valid resetPasswordForm: ResetPasswordForm, bindingResult: BindingResult,
                       request: HttpServletRequest): ResponseEntity<*> {
@@ -174,7 +174,7 @@ class AccountController {
         return ResponseEntity.ok(BasicStringResponse("Reset password order was accepted"))
     }
 
-    @PostMapping("/resetPasswordConfirm")
+    @PostMapping("/reset-password-confirm")
     @ResponseBody
     fun confirmResetPassword(@RequestBody @Valid resetPasswordConfirmForm: ResetPasswordConfirmForm, bindingResult: BindingResult,
                              request: HttpServletRequest): ResponseEntity<*> {
@@ -203,7 +203,7 @@ class AccountController {
         return ResponseEntity.ok(BasicStringResponse("Password was successfully reset"))
     }
 
-    @PutMapping("/changePassword")
+    @PutMapping("/change-password")
     @ResponseBody
     fun changePassword(@RequestBody(required = true) @Valid changePasswordForm: ChangePasswordForm, bindingResult: BindingResult,
                        request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
@@ -222,7 +222,7 @@ class AccountController {
         return ResponseEntity.ok().body(BasicStringResponse("Password was successfully changed"))
     }
 
-    @PutMapping("/updateAccount")
+    @PutMapping("/update")
     @ResponseBody
     fun updateAccount(@RequestBody @Valid updateAccountForm: UpdateAccountForm, bindingResult: BindingResult,
                       request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
