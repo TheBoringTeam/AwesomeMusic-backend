@@ -62,8 +62,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers("/api/user/registration", "/", "/api/user/registrationConfirm").permitAll()
-                .antMatchers("/api/user/sign-in", "/api/user/resetPassword", "/api/user/resetPasswordConfirm").permitAll()
+                .antMatchers("/api/user/registration", "/", "/api/user/registration-confirm").permitAll()
+                .antMatchers("/api/user/sign-in", "/api/user/reset-password", "/api/user/reset-password-confirm").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .cors().and()
