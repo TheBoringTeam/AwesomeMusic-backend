@@ -1,6 +1,6 @@
-if [ ! "$(docker ps -q -f name=backend)" ]; then
-    if [ "$(docker ps -aq -f status=exited -f name=backend)" ]; then
-        # cleanup
-        docker rm backend
-    fi
+if [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q backend)` ]; then
+  docker kill backend
+  echo "No, it's not running."
+else
+  echo "Yes, it's running."
 fi
