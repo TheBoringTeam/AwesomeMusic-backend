@@ -20,6 +20,6 @@ data class SongOwner(
     @Column(name = "song_onwer_id")
     val id: Long = 0
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val createdAt: LocalDateTime = LocalDateTime.now()
 }
