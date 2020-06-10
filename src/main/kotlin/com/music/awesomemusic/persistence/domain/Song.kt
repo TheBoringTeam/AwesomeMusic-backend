@@ -1,6 +1,7 @@
 package com.music.awesomemusic.persistence.domain
 
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -9,8 +10,8 @@ data class Song(
         @Column(name = "song_name")
         var name: String,
 
-        @Column(name = "song_path")
-        var path: String,
+        @Column(name = "song_uuid")
+        var uuid: UUID,
 
         @Column(name = "length")
         var length: Int,

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.*
 
 @Service
 class FileStorageService {
@@ -19,7 +19,7 @@ class FileStorageService {
     lateinit var uploadDir: String
 
     fun saveFile(file: MultipartFile): String {
-        val fileName = StringUtils.cleanPath(file.originalFilename!!)
+        val fileName = StringUtils.cleanPath(UUID.randomUUID().toString() + ".mp3")
 
         try {
             val targetLocation = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName)
