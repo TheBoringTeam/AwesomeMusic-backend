@@ -79,6 +79,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+
+    //Songs
+    implementation("com.mpatric:mp3agic")
 }
 
 tasks.withType<Test> {

@@ -18,10 +18,11 @@ data class Song(
 
         @ManyToOne
         @JoinColumn(name = "song_owner_id")
-        var owner: SongOwner,
+        var owner: SongOwner
 
-        @Column(name = "song_image")
-        var image: String
+        // Image gonna be the same name as song name
+//        @Column(name = "song_image")
+//        var image: String
 ) {
     @Id
     @Column(name = "song_id")

@@ -15,18 +15,29 @@ class FileStorageService {
 
     private val _logger = Logger.getLogger(FileStorageService::class.java)
 
-    @Value("\${file.upload-dir}")
-    lateinit var uploadDir: String
+    @Value("\${file.song.upload-dir}")
+    lateinit var songUploadDir: String
 
-    fun saveFile(file: MultipartFile): String {
-        val fileName = StringUtils.cleanPath(UUID.randomUUID().toString() + ".mp3")
+    @Value("\${file.image.upload-dir}")
+    lateinit var imageUploadDir: String
+
+    fun saveSong(songFile: MultipartFile, imageFile: MultipartFile, uuid: UUID): String {
+        //Clean path names
+        val songFileName = StringUtils.cleanPath("$uuid.mp3")
+        val imageFileName = StringUtils.cleanPath("$uuid.jpg")
 
         try {
-            val targetLocation = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName)
-            Files.copy(file.inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING)
-            return fileName
+            // Prepare space for new files
+            val songTargetLocation = Paths.get(songUploadDir).toAbsolutePath().normalize().resolve(songFileName)
+            val imageTargetLocation = Paths.get(imageUploadDir).toAbsolutePath().normalize().resolve(imageFileName)
+
+            // Save files to local storage
+            Files.copy(songFile.inputStream, songTargetLocation, StandardCopyOption.REPLACE_EXISTING)
+            Files.copy(imageFile.inputStream, imageTargetLocation, StandardCopyOption.REPLACE_EXISTING)
+
+            return songFileName
         } catch (e: Exception) {
-            _logger.error("Could not save file $fileName. Error: ${e.message}")
+            _logger.error("Could not save file $songFileName. Error: ${e.message}")
             throw e
         }
     }

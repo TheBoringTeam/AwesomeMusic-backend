@@ -2,6 +2,7 @@ package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.Country
 import com.music.awesomemusic.persistence.domain.Language
+import com.music.awesomemusic.persistence.domain.SongOwner
 import com.music.awesomemusic.repositories.ICountryRepository
 import com.music.awesomemusic.repositories.ILanguageRepository
 import com.music.awesomemusic.repositories.ISongOwnerRepository
@@ -50,5 +51,9 @@ class InformationService {
 
     fun existsSongOwnerById(songOwnerId: Long): Boolean {
         return _songOwnerRepository.existsById(songOwnerId)
+    }
+
+    fun findSongOwnerById(songOwnerId: Long): SongOwner {
+        return _songOwnerRepository.findById(songOwnerId).orElseThrow { ResourceNotFoundException("There is no song owner with this id") }
     }
 }

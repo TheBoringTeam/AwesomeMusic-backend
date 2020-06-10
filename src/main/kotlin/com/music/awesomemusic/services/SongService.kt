@@ -13,4 +13,8 @@ class SongService {
     fun existsByName(songName: String): Boolean {
         return _songRepository.existsByName(songName)
     }
+
+    fun save(song: Song): Song {
+        return _songRepository.save(song)
+    }
 }

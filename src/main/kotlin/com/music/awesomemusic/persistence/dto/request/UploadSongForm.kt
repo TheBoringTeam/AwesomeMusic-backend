@@ -5,5 +5,11 @@ import javax.validation.constraints.NotEmpty
 
 data class UploadSongForm(
         @ExistsSongOwner
-        var songOwnerId: Long?
-)
+        var songOwnerIdField: Long?,
+
+        @field:NotEmpty(message = "Song name cannot be empty")
+        private val songNameField: String?
+) {
+    val songName: String
+        get() = songNameField!!
+}
