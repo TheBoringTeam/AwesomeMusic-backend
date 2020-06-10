@@ -2,11 +2,13 @@ package com.music.awesomemusic.controllers
 
 import com.music.awesomemusic.persistence.domain.Song
 import com.music.awesomemusic.persistence.dto.request.UploadSongForm
+import com.music.awesomemusic.persistence.dto.response.BasicStringResponse
 import com.music.awesomemusic.persistence.dto.response.UploadSongResponse
 import com.music.awesomemusic.services.FileStorageService
 import com.music.awesomemusic.services.InformationService
 import com.music.awesomemusic.services.SongService
 import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
+import com.music.awesomemusic.utils.validators.annotations.ExistsSongByUUID
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -32,7 +34,7 @@ class SongController {
 
     private val _logger = Logger.getLogger(SongController::class.java)
 
-    @PostMapping("upload")
+    @PostMapping("/upload")
     @ResponseBody
     fun uploadFile(@RequestParam("song_file", required = true) songFile: MultipartFile, @RequestBody(required = true) uploadSongForm: UploadSongForm,
                    @RequestParam("song_image_file", required = true) songImageFile: MultipartFile, @AuthenticationPrincipal userDetails: UserDetails,
@@ -61,5 +63,18 @@ class SongController {
         // Save song to database
         _songService.save(song)
         return ResponseEntity.ok(UploadSongResponse(fileName, "Song was successfully uploaded", songFile.size))
+    }
+
+    @GetMapping("/{songUUID}")
+    @ResponseBody
+    fun getSong(@PathVariable("songUUID", required = true) @ExistsSongByUUID songUUID: UUID, @AuthenticationPrincipal userDetails: UserDetails, bindingResult: BindingResult): ResponseEntity<*> {
+        //form validation
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        val song = _songService.findByUUID(songUUID)
+
+        return ResponseEntity.ok(BasicStringResponse("Fine"))
     }
 }

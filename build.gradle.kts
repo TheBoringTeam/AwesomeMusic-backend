@@ -81,7 +81,6 @@ dependencies {
     }
 
     //Songs
-    implementation("com.mpatric:mp3agic")
 }
 
 tasks.withType<Test> {

@@ -12,4 +12,8 @@ interface ISongRepository : CrudRepository<Song, Long> {
     fun existsByName(name: String): Boolean
 
     override fun existsById(id: Long): Boolean
+
+    fun existsByUuid(uuid: UUID): Boolean
+
+    fun findByUuid(uuid: UUID): Optional<Song>
 }
