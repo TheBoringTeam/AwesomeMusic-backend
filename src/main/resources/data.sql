@@ -18,5 +18,5 @@ values
 (6, 'DE', 'Germany');
 
 --- Init song owner
-insert into song_owner(song_onwer_id, comment, song_owner_email, song_owner_name)
+insert into song_owner(song_owner_id, comment, song_owner_email, song_owner_name)
 values (1, 'Unknown', 'Unknown', 'Unknown');
