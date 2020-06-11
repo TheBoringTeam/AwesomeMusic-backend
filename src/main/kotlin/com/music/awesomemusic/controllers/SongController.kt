@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import reactor.core.publisher.Mono
 import java.util.*
 
 @RestController
@@ -67,7 +68,8 @@ class SongController {
 
     @GetMapping("/{songUUID}")
     @ResponseBody
-    fun getSong(@PathVariable("songUUID", required = true) @ExistsSongByUUID songUUID: UUID, @AuthenticationPrincipal userDetails: UserDetails, bindingResult: BindingResult): ResponseEntity<*> {
+    fun getSong(@PathVariable("songUUID", required = true) @ExistsSongByUUID songUUID: UUID, @AuthenticationPrincipal userDetails: UserDetails,
+                bindingResult: BindingResult, @RequestHeader(value = "Range", required = false) rangeList: String?): ResponseEntity<*> {
         //form validation
         if (bindingResult.hasErrors()) {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
@@ -75,6 +77,6 @@ class SongController {
 
         val song = _songService.findByUUID(songUUID)
 
-        return ResponseEntity.ok(BasicStringResponse("Fine"))
+        return ResponseEntity.ok("fine")
     }
 }

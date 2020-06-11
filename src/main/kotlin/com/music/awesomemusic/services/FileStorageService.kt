@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.*
@@ -38,6 +39,19 @@ class FileStorageService {
             return songFileName
         } catch (e: Exception) {
             _logger.error("Could not save file $songFileName. Error: ${e.message}")
+            throw e
+        }
+    }
+
+    fun getSongSize(fileName: String): Long {
+        return sizeFromFile(Paths.get(songUploadDir + fileName))
+    }
+
+    private fun sizeFromFile(filePath: Path): Long {
+        try {
+            return Files.size(filePath)
+        } catch (e: Exception) {
+            _logger.error("Error during extracting file size: ${e.message}")
             throw e
         }
     }
