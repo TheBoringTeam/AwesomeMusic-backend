@@ -48,7 +48,7 @@ class AccountService {
     }
 
     fun findByUUID(uuid: UUID): AwesomeAccount {
-        return accountRepository.findById(uuid).orElseThrow { ResourceNotFoundException("Account with this UUID was not found") }
+        return accountRepository.findByUuid(uuid).orElseThrow { ResourceNotFoundException("Account with this UUID was not found") }
     }
 
     fun createAccount(userFormDto: AccountSignUpForm): AwesomeAccount {

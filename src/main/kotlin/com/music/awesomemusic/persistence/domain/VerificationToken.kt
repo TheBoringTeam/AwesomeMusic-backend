@@ -10,7 +10,7 @@ class VerificationToken(
         val token: String,
 
         @OneToOne(targetEntity = AwesomeAccount::class, fetch = FetchType.EAGER)
-        @JoinColumn(nullable = false, name = "account_uuid") val account: AwesomeAccount,
+        @JoinColumn(nullable = false, name = "account_id") val account: AwesomeAccount,
 
         @Column(name = "tokenType", nullable = false)
         val tokenType: TokenType

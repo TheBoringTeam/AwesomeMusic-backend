@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.MessageSource
-import org.springframework.http.CacheControl
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -35,6 +32,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MultipartFile
 import java.net.URI
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
@@ -138,6 +136,7 @@ class AccountController {
                 .addField("username", userDetails.username)
                 .addField("is_admin", userDetails.authorities.contains(SimpleGrantedAuthority("ADMIN")))
                 .addField("email", account.email)
+                .addField("id", account.uuid)
                 .addField("is_activated", account.isActivated)
                 .toJSON()
     }
@@ -254,25 +253,22 @@ class AccountController {
     }
 
     @PutMapping("/update-avatar")
-    @ResponseBody
-    fun updateAvatar(@RequestParam("avatar", required = true) imageFile: MultipartFile, @AuthenticationPrincipal userDetails: UserDetails,
-                     bindingResult: BindingResult): ResponseEntity<*> {
+    fun updateAvatar(@RequestPart("avatar", required = true) imageFile: MultipartFile, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
         val account = _accountService.findByUsername(userDetails.username)
         //TODO: Test this shit
         val fileName = _storageService.saveImage(imageFile, account.uuid)
         return ResponseEntity.ok(BasicStringResponse(fileName))
     }
 
-    @GetMapping("/{uuid}/avatar")
-    @ResponseBody
-    fun getProfileImage(@PathVariable("uuid") uuid: String, @AuthenticationPrincipal userDetails: UserDetails,
-                        bindingResult: BindingResult): ResponseEntity<*> {
+    @GetMapping("/{uuid}/avatar", produces = [MediaType.IMAGE_JPEG_VALUE])
+    fun getProfileImage(@PathVariable("uuid") uuid: String): ResponseEntity<*> {
 
-        val account = _accountService.
-        val inputStream = _storageService.getImage("$uuid.jpg")
+        val account = _accountService.findByUUID(UUID.fromString(uuid))
+        val inputStream = _storageService.getImage("${account.uuid}.jpg")
+
         // prepare headers for response
         val headers = HttpHeaders()
         headers.cacheControl = CacheControl.noCache().headerValue
-        ResponseEntity<ByteArray>(inputStream.readAllBytes(), headers, HttpStatus.OK)
+        return ResponseEntity<ByteArray>(inputStream.readAllBytes(), headers, HttpStatus.OK)
     }
 }

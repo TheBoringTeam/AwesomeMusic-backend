@@ -65,7 +65,7 @@ class FileStorageService {
     }
 
     fun getImage(fileName: String): InputStream {
-        val file = File(fileName)
+        val file = File("$imageUploadDir/$fileName")
         if (file.exists()) {
             return file.inputStream()
         } else {
