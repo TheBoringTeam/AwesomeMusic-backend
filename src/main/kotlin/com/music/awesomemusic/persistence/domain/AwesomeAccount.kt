@@ -27,8 +27,8 @@ class AwesomeAccount(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "account_id")
-    val id: Long = 0
+    @Column(name = "account_uuid")
+    val uuid: UUID = UUID.randomUUID()
 
     @Column(name = "musician_biography", length = 1024, nullable = true)
     var biography: String = ""

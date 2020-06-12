@@ -1,6 +1,7 @@
 package com.music.awesomemusic.controllers
 
 import com.music.awesomemusic.persistence.dto.response.CountryResponse
+import com.music.awesomemusic.persistence.dto.response.GenderResponse
 import com.music.awesomemusic.persistence.dto.response.LanguageResponse
 import com.music.awesomemusic.services.InformationService
 import org.springframework.beans.factory.annotation.Autowired

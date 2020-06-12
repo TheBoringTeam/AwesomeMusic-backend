@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 /**
  * Service for account management.
@@ -44,6 +45,10 @@ class AccountService {
         return accountRepository.findByUsername(username).orElseThrow {
             UsernameNotFoundException("Username was not found")
         }
+    }
+
+    fun findByUUID(uuid: UUID): AwesomeAccount {
+        return accountRepository.findById(uuid).orElseThrow { ResourceNotFoundException("Account with this UUID was not found") }
     }
 
     fun createAccount(userFormDto: AccountSignUpForm): AwesomeAccount {

@@ -56,8 +56,8 @@ class AccountCreateTest {
         val userRegistrationForm = AccountSignUpForm("testUser6", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 
-        val userFromRepo = accountRepository.findById(user.id).get()
-        assertEquals(user.id, userFromRepo.id)
+        val userFromRepo = accountRepository.findById(user.uuid).get()
+        assertEquals(user.uuid, userFromRepo.uuid)
     }
 
     @Test

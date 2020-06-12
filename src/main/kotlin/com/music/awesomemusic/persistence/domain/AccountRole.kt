@@ -7,7 +7,7 @@ import javax.persistence.*
 @Table(name = "account_role")
 class AccountRole(
         @ManyToOne
-        @JoinColumn(name = "account_id")
+        @JoinColumn(name = "account_uuid")
         var account: AwesomeAccount,
 
         @ManyToOne

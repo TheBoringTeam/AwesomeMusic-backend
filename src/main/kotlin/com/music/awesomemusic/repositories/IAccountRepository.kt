@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface IAccountRepository : CrudRepository<AwesomeAccount, Long> {
+interface IAccountRepository : CrudRepository<AwesomeAccount, UUID> {
     fun findByUsername(username: String): Optional<AwesomeAccount>
 
     fun existsByEmail(email: String): Boolean
@@ -14,4 +14,6 @@ interface IAccountRepository : CrudRepository<AwesomeAccount, Long> {
     fun existsByUsername(username: String): Boolean
 
     fun findByEmail(email: String): Optional<AwesomeAccount>
+
+    fun findByUuid(uuid: UUID): Optional<AwesomeAccount>
 }

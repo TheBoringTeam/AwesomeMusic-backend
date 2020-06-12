@@ -8,6 +8,7 @@ import com.music.awesomemusic.persistence.dto.response.BadRequestResponse
 import com.music.awesomemusic.persistence.dto.response.BasicStringResponse
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.services.FileStorageService
 import com.music.awesomemusic.services.TokenService
 import com.music.awesomemusic.utils.events.OnPasswordResetEvent
 import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.MessageSource
+import org.springframework.http.CacheControl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -31,6 +33,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
+import org.springframework.web.multipart.MultipartFile
 import java.net.URI
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
@@ -49,10 +52,13 @@ class AccountController {
     lateinit var authenticationManager: AuthenticationManager
 
     @Autowired
-    lateinit var accountService: AccountService
+    private lateinit var _accountService: AccountService
 
     @Autowired
     lateinit var tokenService: TokenService
+
+    @Autowired
+    private lateinit var _storageService: FileStorageService
 
     @Autowired
     lateinit var messages: MessageSource
@@ -83,7 +89,7 @@ class AccountController {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
-        val account = accountService.createAccount(accountSignUpForm)
+        val account = _accountService.createAccount(accountSignUpForm)
 
         _logger.debug("User was created")
 
@@ -109,9 +115,9 @@ class AccountController {
 
         //get authenticated user
         val user: AwesomeAccount = try { // try to find by email
-            accountService.findByEmail(accountLoginForm.login)
+            _accountService.findByEmail(accountLoginForm.login)
         } catch (e: ResourceNotFoundException) { // if doesn't exists, then find by username
-            accountService.findByUsername(accountLoginForm.login)
+            _accountService.findByUsername(accountLoginForm.login)
         }
 
         val authorities = arrayListOf<String>()
@@ -126,7 +132,7 @@ class AccountController {
     @GetMapping("/me")
     @ResponseBody
     fun me(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
-        val account = accountService.findByUsername(userDetails.username)
+        val account = _accountService.findByUsername(userDetails.username)
 
         return ResponseBuilderMap()
                 .addField("username", userDetails.username)
@@ -161,11 +167,11 @@ class AccountController {
         }
 
         account.isActivated = true
-        accountService.saveAccount(account)
+        _accountService.saveAccount(account)
 
         // Redirect to front-end success page
         headers.location = URI.create("http://$serverIp/registration-confirmed")
-        return ResponseEntity<String>(headers,HttpStatus.MOVED_PERMANENTLY)
+        return ResponseEntity<String>(headers, HttpStatus.MOVED_PERMANENTLY)
     }
 
     @PostMapping("/reset-password")
@@ -177,7 +183,7 @@ class AccountController {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
-        val account = accountService.findByEmail(resetPasswordForm.email)
+        val account = _accountService.findByEmail(resetPasswordForm.email)
 
         applicationEventPublisher.publishEvent(OnPasswordResetEvent(account, request.locale, request.contextPath))
         return ResponseEntity.ok(BasicStringResponse("Reset password order was accepted"))
@@ -207,7 +213,7 @@ class AccountController {
             return ResponseEntity<String>(message, HttpStatus.OK)
         }
 
-        accountService.setPassword(account, resetPasswordConfirmForm.password)
+        _accountService.setPassword(account, resetPasswordConfirmForm.password)
         tokenService.delete(verificationToken)
         return ResponseEntity.ok(BasicStringResponse("Password was successfully reset"))
     }
@@ -221,12 +227,12 @@ class AccountController {
             throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
         }
 
-        val account = accountService.findByUsername(userDetails.username)
-        if (!accountService.isPasswordEquals(changePasswordForm.oldPassword, account)) {
+        val account = _accountService.findByUsername(userDetails.username)
+        if (!_accountService.isPasswordEquals(changePasswordForm.oldPassword, account)) {
             return ResponseEntity.badRequest().body(BadRequestResponse("Old password is not correct", request.servletPath))
         }
 
-        accountService.setPassword(account, changePasswordForm.newPassword)
+        _accountService.setPassword(account, changePasswordForm.newPassword)
 
         return ResponseEntity.ok().body(BasicStringResponse("Password was successfully changed"))
     }
@@ -241,9 +247,32 @@ class AccountController {
         }
 
         // update account
-        val account = accountService.findByUsername(userDetails.username)
-        accountService.updateAll(updateAccountForm, account)
+        val account = _accountService.findByUsername(userDetails.username)
+        _accountService.updateAll(updateAccountForm, account)
 
         return ResponseEntity.ok(BasicStringResponse("Account was successfully update"))
+    }
+
+    @PutMapping("/update-avatar")
+    @ResponseBody
+    fun updateAvatar(@RequestParam("avatar", required = true) imageFile: MultipartFile, @AuthenticationPrincipal userDetails: UserDetails,
+                     bindingResult: BindingResult): ResponseEntity<*> {
+        val account = _accountService.findByUsername(userDetails.username)
+        //TODO: Test this shit
+        val fileName = _storageService.saveImage(imageFile, account.uuid)
+        return ResponseEntity.ok(BasicStringResponse(fileName))
+    }
+
+    @GetMapping("/{uuid}/avatar")
+    @ResponseBody
+    fun getProfileImage(@PathVariable("uuid") uuid: String, @AuthenticationPrincipal userDetails: UserDetails,
+                        bindingResult: BindingResult): ResponseEntity<*> {
+
+        val account = _accountService.
+        val inputStream = _storageService.getImage("$uuid.jpg")
+        // prepare headers for response
+        val headers = HttpHeaders()
+        headers.cacheControl = CacheControl.noCache().headerValue
+        ResponseEntity<ByteArray>(inputStream.readAllBytes(), headers, HttpStatus.OK)
     }
 }
