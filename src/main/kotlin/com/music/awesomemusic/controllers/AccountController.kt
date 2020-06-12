@@ -16,8 +16,10 @@ import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.MessageSource
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -29,6 +31,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
+import java.net.URI
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
@@ -59,6 +62,9 @@ class AccountController {
 
     @Autowired
     lateinit var applicationEventPublisher: ApplicationEventPublisher
+
+    @Value("\${spring.mail.ip}")
+    lateinit var serverIp: String
 
     @GetMapping("/hello")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -131,32 +137,35 @@ class AccountController {
     }
 
     @GetMapping("/registration-confirm")
-    @ResponseBody
     fun registrationConfirm(@RequestParam("token") token: String, request: WebRequest): ResponseEntity<*> {
         val locale = request.locale
         val verificationToken: VerificationToken
+        val headers = HttpHeaders()
 
         try {
             verificationToken = tokenService.getEmailVerificationToken(token)
         } catch (e: ResourceNotFoundException) { // if token is not present in database
             val message = messages.getMessage("auth.message.invalid", null, locale)
-            // TODO : Redirect to front end
-            return ResponseEntity<String>(message, HttpStatus.OK)
+            // Redirect to front-end invalid token page
+            headers.location = URI.create("http://$serverIp/registration-invalid")
+            return ResponseEntity<Unit>(headers, HttpStatus.MOVED_PERMANENTLY)
         }
 
         val account = verificationToken.account
 
         if (tokenService.isTokenExpired(verificationToken)) { // if token is expired
             val message = messages.getMessage("auth.message.expired", null, locale)
-            // TODO : Redirect to front end
-            return ResponseEntity<String>(message, HttpStatus.OK)
+            // Redirect to front-end expired token page
+            headers.location = URI.create("http://$serverIp/registration-expired")
+            return ResponseEntity<Unit>(headers, HttpStatus.MOVED_PERMANENTLY)
         }
 
         account.isActivated = true
         accountService.saveAccount(account)
 
-        // TODO: Redirect to front-end
-        return ResponseEntity.ok(BasicStringResponse("Here should be redirect to frontend"))
+        // Redirect to front-end success page
+        headers.location = URI.create("http://$serverIp/registration-confirmed")
+        return ResponseEntity<String>(headers,HttpStatus.MOVED_PERMANENTLY)
     }
 
     @PostMapping("/reset-password")

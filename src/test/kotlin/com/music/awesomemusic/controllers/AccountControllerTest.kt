@@ -2,11 +2,13 @@ package com.music.awesomemusic.controllers
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
+import com.music.awesomemusic.persistence.dto.response.ErrorResponse
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -82,7 +84,6 @@ class AccountControllerTest {
         assertEquals(response.statusCode, HttpStatus.OK)
     }
 
-
     @Test
     fun changePasswordFunctionalityTest() {
         val token = tokenProvider.createToken(account.username, emptyList<String>())
@@ -93,13 +94,17 @@ class AccountControllerTest {
 
         assertEquals(tokenProvider.validateToken(token), true)
 
-        val request = HttpEntity<String>("{ \"old_password\" : \"123456\", \"new_password\" : \"12345\" }", headers)
+        val request = HttpEntity<String>("{ \"old_password\" : \"12345\", \"new_password\" : \"12345\" }", headers)
 
         val response = restTemplate.exchange("http://localhost:$port/api/user/change-password",
-                HttpMethod.PUT, request, String::class.java)
+                HttpMethod.PUT, request, ErrorResponse::class.java)
 
         accountService.isPasswordEquals("12345", account)
 
-        assertEquals(response.statusCode, HttpStatus.OK)
+        assertEquals(response.statusCode, HttpStatus.BAD_REQUEST)
+
+        response.body?.let {
+            assertTrue(it.message.contains("Old password is not correct"))
+        }
     }
 }

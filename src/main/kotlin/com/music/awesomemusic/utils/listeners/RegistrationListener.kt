@@ -52,7 +52,7 @@ class RegistrationListener : ApplicationListener<OnRegistrationCompleteEvent> {
         val recipientAddress = account.email
 
         val subject = "AwesomeMusic - Email Confirmation"
-        val confUrl = "http://$ip:$port/api/user/registrationConfirm?token=$token"
+        val confUrl = "http://$ip:$port/api/user/registration-confirm?token=$token"
 
         // TODO : Handle different languages
         var message = messages.getMessage("message.regSucc", null, "You registered successfully." +
