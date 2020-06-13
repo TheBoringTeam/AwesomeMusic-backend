@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 import org.springframework.web.multipart.MultipartFile
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
@@ -74,7 +75,28 @@ class FileStorageService {
     }
 
     fun getSongSize(fileName: String): Long {
-        return sizeFromFile(Paths.get(songUploadDir + fileName))
+        return sizeFromFile(Paths.get("$songUploadDir/$fileName"))
+    }
+
+    fun readByteRange(fileName: String, start: Long, end: Long): ByteArray {
+        val path = Paths.get("$songUploadDir/$fileName")
+        try {
+            val inputStream = Files.newInputStream(path)
+            val bufferedOutputStream = ByteArrayOutputStream()
+
+            val data = ByteArray(1024)
+            var nRead: Int
+            while (inputStream.read(data, 0, data.size).also { nRead = it } != -1) {
+                bufferedOutputStream.write(data, 0, nRead)
+            }
+            bufferedOutputStream.flush()
+            val result = ByteArray((end - start).toInt() + 1)
+            System.arraycopy(bufferedOutputStream.toByteArray(), start.toInt(), result, 0, result.size)
+            return result
+        } catch (e: Exception) {
+            _logger.error("Error during reading a byteRange from file $fileName. Error: ${e.message}")
+            throw e
+        }
     }
 
     private fun sizeFromFile(filePath: Path): Long {
