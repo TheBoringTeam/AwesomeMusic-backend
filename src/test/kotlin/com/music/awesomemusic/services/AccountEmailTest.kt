@@ -46,7 +46,7 @@ class AccountEmailTest {
 
 
     @Test
-    fun testCreateEmailVerificationTokenValid() {
+    fun shouldCreateEmailVerificationTokenValid() {
         val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
@@ -59,7 +59,7 @@ class AccountEmailTest {
 
 
     @Test
-    fun testGetVerificationTokenValid() {
+    fun shouldGetVerificationTokenValid() {
         val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
@@ -70,7 +70,7 @@ class AccountEmailTest {
     }
 
     @Test
-    fun testExistsByEmailValid() {
+    fun shouldExistsByEmailValid() {
         val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 

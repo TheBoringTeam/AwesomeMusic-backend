@@ -37,7 +37,7 @@ class AccountUsernameTest {
 
 
     @Test
-    fun testExistsByUsernameValid() {
+    fun shouldExistsByUsernameValid() {
         val account = AwesomeAccount("testUsername","12", "email","name", false )
         accountRepository.save(account)
 
@@ -45,7 +45,7 @@ class AccountUsernameTest {
     }
 
     @Test
-    fun testFindByUsername() {
+    fun shouldFindByUsername() {
         val account = AwesomeAccount("testUsername","12", "email","name", false )
         accountRepository.save(account)
 
@@ -56,7 +56,7 @@ class AccountUsernameTest {
 
 
     @Test
-    fun testFindByUsernameWithThrowExceptionFail() {
+    fun shouldFindByUsernameWithThrowExceptionFail() {
         val account = AwesomeAccount("testUsername","12", "email","name", false )
         accountRepository.save(account)
 

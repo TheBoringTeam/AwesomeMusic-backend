@@ -38,7 +38,7 @@ class AccountCreateTest {
 
 
     @Test
-    fun testDatabaseUniqueValues() {
+    fun shouldDatabaseUniqueValues() {
         val allAccounts = accountRepository.findAll()
         val account = AwesomeAccount("testUsername", "12125125",
                 "test@mail.com", "some_name", false)
@@ -52,7 +52,7 @@ class AccountCreateTest {
     }
 
     @Test
-    fun testCreateAccountValid() {
+    fun shouldCreateAccountValid() {
         val userRegistrationForm = AccountSignUpForm("testUser6", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 
@@ -61,7 +61,7 @@ class AccountCreateTest {
     }
 
     @Test
-    fun testEncoderPasswordForAccount() {
+    fun shouldEncoderPasswordForAccount() {
         val userRegistrationForm = AccountSignUpForm("testUser6", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 
