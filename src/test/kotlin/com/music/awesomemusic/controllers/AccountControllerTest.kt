@@ -124,6 +124,7 @@ class AccountControllerTest {
         assertEquals(responseEntity.statusCode, HttpStatus.BAD_REQUEST)
     }
 
+
     @Test
     @Throws(Exception::class)
     fun shouldSignUpIfPasswordMore32Expected400() {
@@ -187,6 +188,71 @@ class AccountControllerTest {
         headers.contentType = MediaType.APPLICATION_JSON
 
         val request = HttpEntity<String>("{\"username\": \"ViolettaVioletta1\", \"password\": \"1233Agf%%%QWERTY%1qq\",\"email\":\"1@.r\",\"is_collective\": \"false\" }", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/registration", request, String::class.java)
+
+        assertEquals(responseEntity.statusCode, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSignUpIfLoginExistsExpected400() {
+
+       val account =  AccountSignUpForm("Violetta1234", "122334", "email", false)
+        accountService.createAccount(account)
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        val request = HttpEntity<String>("{\"username\": \"Violetta1234\", \"password\": \"1233Agf%%%QWERTY%1qq\",\"email\":\"email@mail.ru\",\"is_collective\": \"false\" }", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/registration", request, String::class.java)
+
+        assertEquals(responseEntity.statusCode, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSignUpIfLoginExistsWithDifferentRegisterExpected201() {
+
+        val account =  AccountSignUpForm("Violetta1234", "122334", "email", false)
+        accountService.createAccount(account)
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        val request = HttpEntity<String>("{\"username\": \"VIOLETTA1234\", \"password\": \"1233Agf%%%QWERTY%1qq\",\"email\":\"email@mail.ru\",\"is_collective\": \"false\" }", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/registration", request, String::class.java)
+
+        assertEquals(responseEntity.statusCode, HttpStatus.CREATED)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSignUpIfLoginExistsWithDifferentRegister2Expected201() {
+
+        val account =  AccountSignUpForm("VIOLETTA1234", "122334", "email", false)
+        accountService.createAccount(account)
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        val request = HttpEntity<String>("{\"username\": \"Violetta1234\", \"password\": \"1233Agf%%%QWERTY%1qq\",\"email\":\"email@mail.ru\",\"is_collective\": \"false\" }", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/registration", request, String::class.java)
+
+        assertEquals(responseEntity.statusCode, HttpStatus.CREATED)
+    }
+
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSignUpIfEmailExistsExpected400() {
+
+        val accountSignUpForm = AccountSignUpForm("ViolettaVioletta", "122334", "email@email.ru", false)
+        val account = accountService.createAccount(accountSignUpForm)
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        val request = HttpEntity<String>("{\"username\": \"Violetta\", \"password\": \"1233Agf%%%QWERTY%1qq\",\"email\":\"email@email.ru\",\"is_collective\": \"false\" }", headers)
         val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/registration", request, String::class.java)
 
         assertEquals(responseEntity.statusCode, HttpStatus.BAD_REQUEST)
