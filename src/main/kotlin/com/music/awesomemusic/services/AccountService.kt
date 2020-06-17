@@ -129,4 +129,6 @@ class AccountService {
     fun findByEmail(email: String): AwesomeAccount {
         return accountRepository.findByEmail(email).orElseThrow { ResourceNotFoundException("User with email [${email}] doesn't exist") }
     }
+
+
 }

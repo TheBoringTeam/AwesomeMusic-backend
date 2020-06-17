@@ -4,6 +4,7 @@ package com.music.awesomemusic.controllers
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.persistence.dto.request.*
+import com.music.awesomemusic.persistence.dto.response.AccountResponse
 import com.music.awesomemusic.persistence.dto.response.BadRequestResponse
 import com.music.awesomemusic.persistence.dto.response.BasicStringResponse
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
@@ -270,5 +271,13 @@ class AccountController {
         val headers = HttpHeaders()
         headers.cacheControl = CacheControl.noCache().headerValue
         return ResponseEntity<ByteArray>(inputStream.readAllBytes(), headers, HttpStatus.OK)
+    }
+
+    @GetMapping("/{uuid}/info")
+    @ResponseBody
+    fun getProfileInformation(@PathVariable("uuid") accountUUID: String,
+                              @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
+        val account = _accountService.findByUUID(uuid = UUID.fromString(accountUUID))
+        return ResponseEntity.ok(AccountResponse(account))
     }
 }

@@ -1,7 +1,7 @@
 package com.music.awesomemusic.persistence.domain
 
 //unknown, primary, secondary, bachelor, master, doctoral
-enum class Education(education: String) {
+enum class Education(val educationName: String) {
     UNKNOWN("Unknown"),
     PRIMARY("Primary"),
     SECONDARY("Secondary"),
