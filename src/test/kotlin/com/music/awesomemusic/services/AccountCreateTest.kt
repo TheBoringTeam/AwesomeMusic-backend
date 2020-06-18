@@ -3,6 +3,8 @@ package com.music.awesomemusic.services
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
+import com.music.awesomemusic.security.tokens.JwtTokenProvider
+import junit.framework.Assert
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotSame
 import org.junit.Before
@@ -24,6 +26,9 @@ class AccountCreateTest {
     @Autowired
     lateinit var accountRepository: IAccountRepository
 
+    @Autowired
+    private lateinit var tokenProvider: JwtTokenProvider
+
 
     @Before
     fun init() {
@@ -34,6 +39,19 @@ class AccountCreateTest {
 
     @Test
     fun contextLoads() {
+    }
+
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSignInToReturnToken() {
+
+        val account = accountService.createAccount(AccountSignUpForm("test4", "1234", "emailTest4", false))
+
+        val authorities = arrayListOf<String>()
+        val token = tokenProvider.createToken(account.username, authorities)
+
+        Assert.assertNotNull(token)
     }
 
 
