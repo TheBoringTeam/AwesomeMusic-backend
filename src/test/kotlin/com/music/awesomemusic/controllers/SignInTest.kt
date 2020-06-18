@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountControllerTest {
+class SignInTest {
     @LocalServerPort
     private var port: Int = 0
 
@@ -54,72 +54,74 @@ class AccountControllerTest {
 
     @Test
     @Throws(Exception::class)
-    fun shouldMeIfAccountExistsExpected200() {
+    fun shouldSignInWithUsernameExpected200() {
 
-        val account = accountService.createAccount(AccountSignUpForm("test5", "1234", "emailTest5", false))
-        val authorities = arrayListOf<String>()
-
-        val token = tokenProvider.createToken(account.username, authorities)
-
+        accountService.createAccount(AccountSignUpForm("test1", "1234", "emailTest1", false))
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
-
-        headers.set("Authorization", "AwesomeToken $token")
-
-
-        val request = HttpEntity<String>(headers)
-        val responseEntity = restTemplate.exchange("http://localhost:$port/api/user/me", HttpMethod.GET, request, String::class.java)
+        val request = HttpEntity<String>("{\"login\": \"test1\", \"password\": \"1234\"}", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/sign-in", request, String::class.java)
 
         assertEquals(responseEntity.statusCode, HttpStatus.OK)
-
     }
 
     @Test
     @Throws(Exception::class)
-    fun shouldMeIfAccountNoExistsExpected403() {
+    fun shouldSignInWithEmailExpected200() {
 
+        accountService.createAccount(AccountSignUpForm("test2", "1234", "emailTest2", false))
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
-
-
-        val request = HttpEntity<String>(headers)
-        val responseEntity = restTemplate.exchange("http://localhost:$port/api/user/me", HttpMethod.GET, request, String::class.java)
-
-        assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
-
-    }
-
-    @Test
-    fun shouldPasswordResetExpected200() {
-        val account = accountService.createAccount(AccountSignUpForm("test6", "1234", "emailTest6@mail.ru", false))
-
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_JSON
-        val request = HttpEntity<String>("{\"email\":\"emailTest6@mail.ru\"}", headers)
-        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/reset-password", request, String::class.java)
+        val request = HttpEntity<String>("{\"login\": \"emailTest2\", \"password\": \"1234\"}", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/sign-in", request, String::class.java)
 
         assertEquals(responseEntity.statusCode, HttpStatus.OK)
     }
 
     @Test
-    fun shouldChangePasswordExpected200() {
-        val account = accountService.createAccount(AccountSignUpForm("test7", "1234rgsrsQEW%%", "test7@mail.ru", false))
+    @Throws(Exception::class)
+    fun shouldSignInWithEmailIfNoExistsExpected403() {
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+        val request = HttpEntity<String>("{\"login\": \"emailTest3@gmail.com\", \"password\": \"1234\"}", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/sign-in", request, String::class.java)
+
+        assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSignInWithUsernameIfNoExistsExpected403() {
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+        val request = HttpEntity<String>("{\"login\": \"testName\", \"password\": \"1234\"}", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/sign-in", request, String::class.java)
+
+        assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSignInReturnTokenExpected200() {
+
+        val account = accountService.createAccount(AccountSignUpForm("testName", "1234", "emailTest10", false))
         val authorities = arrayListOf<String>()
 
         val token = tokenProvider.createToken(account.username, authorities)
 
-        assertEquals(tokenProvider.validateToken(token), true)
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
-        headers.set("Authorization", "AwesomeToken $token")
 
+        val request = HttpEntity<String>("{\"login\": \"testName\", \"password\": \"1234\"}", headers)
+        val responseEntity = restTemplate.postForEntity("http://localhost:$port/api/user/sign-in", request, String::class.java)
 
-        val request = HttpEntity<String>("{\"old_password\":\"1234rgsrsQEW%%\",\"new_password\":\"QwertY1234&&\" }", headers)
-        val responseEntity = restTemplate.exchange("http://localhost:$port/api/user/change-password", HttpMethod.PUT, request, String::class.java)
+        assertEquals(tokenProvider.validateToken(token), true)
 
         assertEquals(responseEntity.statusCode, HttpStatus.OK)
-    }
 
+    }
 
 }
 

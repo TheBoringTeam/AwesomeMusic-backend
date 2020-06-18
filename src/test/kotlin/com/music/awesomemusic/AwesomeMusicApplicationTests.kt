@@ -41,7 +41,7 @@ class AwesomeMusicApplicationTests {
 
 
     @Test
-    fun testDatabaseUniqueValues() {
+    fun shouldDatabaseUniqueValues() {
         val allAccounts = accountRepository.findAll()
         val account = AwesomeAccount("testUsername", "12125125",
                 "test@mail.com", "some_name", false)
