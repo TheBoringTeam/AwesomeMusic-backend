@@ -14,6 +14,11 @@ class TagSongRate (
         @JoinColumn(name = "account_id")
         var account: AwesomeAccount
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "tag_song_rate_id")
+    val id: Long = 0
+
     @Column(name = "is_positive_rate", nullable = false)
     var isPositive: Boolean = true
 

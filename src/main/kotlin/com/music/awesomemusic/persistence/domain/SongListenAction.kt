@@ -14,6 +14,11 @@ class SongListenAction(
         @JoinColumn(name = "account_id")
         var account: AwesomeAccount
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "song_listen_action_id")
+    val id: Long = 0
+
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now()
 }

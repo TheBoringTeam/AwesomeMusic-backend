@@ -1,8 +1,6 @@
 package com.music.awesomemusic.persistence.domain
 
-import org.bouncycastle.util.IPAddress
-import java.math.BigInteger
-import java.net.URL
+import java.net.InetAddress
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -18,8 +16,13 @@ class AccountAction(
         var action: Action,
 
         @Column(name = "account_IP")
-        var accountIP: IPAddress
+        var accountIP: InetAddress
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "account_action_id")
+    val id: Long = 0
+
     @Column(name = "action_info", length = 256, nullable = true)
     var actionInfo: String = ""
 

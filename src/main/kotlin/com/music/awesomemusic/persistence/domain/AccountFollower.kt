@@ -7,13 +7,18 @@ import javax.persistence.*
 @Table(name = "account_follower")
 class AccountFollower (
         @ManyToOne
-        @JoinColumn(name = "account_id")
-        var account: AwesomeAccount,
+        @JoinColumn(name = "account_id_from")
+        val accountFrom: AwesomeAccount,
 
         @ManyToOne
-        @JoinColumn(name = "account_id")
-        var followerAccount: AwesomeAccount //?
+        @JoinColumn(name = "account_id_to")
+        val AccountTo: AwesomeAccount
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "account_follower_id")
+    val id: Long = 0
+
     @Column(name = "created_at", nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 }

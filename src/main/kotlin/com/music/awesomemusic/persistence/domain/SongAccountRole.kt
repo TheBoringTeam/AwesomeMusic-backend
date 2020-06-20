@@ -14,6 +14,11 @@ class SongAccountRole(
         @JoinColumn(name = "account_role_id")
         var accountRole: AccountRole
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "song_account_role_id")
+    val id: Long = 0
+
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime = LocalDateTime.now()
 }

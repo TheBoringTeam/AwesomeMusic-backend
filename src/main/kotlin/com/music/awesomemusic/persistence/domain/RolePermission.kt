@@ -13,4 +13,8 @@ class RolePermission(
         @JoinColumn(name = "permission_id", nullable = false)
         var permission: Permission
 ) {
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        @Column(name = "role_permission_id")
+        val id: Long = 0
 }
