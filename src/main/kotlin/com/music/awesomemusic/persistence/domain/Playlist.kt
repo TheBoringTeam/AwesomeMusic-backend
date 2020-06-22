@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "account_action")
+@Table(name = "playlist")
 class Playlist (
         @ManyToOne
         @JoinColumn(name = "account_id")
