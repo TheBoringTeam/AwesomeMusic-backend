@@ -30,8 +30,9 @@ class AwesomeMusicApplicationTests {
 
     @Before
     fun init() {
-        accountRepository.deleteAll()
         tokenRepository.deleteAll()
+        accountRepository.deleteAll()
+
     }
 
 
@@ -41,7 +42,7 @@ class AwesomeMusicApplicationTests {
 
 
     @Test
-    fun shouldDatabaseUniqueValues() {
+    fun `check if database unigue values when create user`() {
         val allAccounts = accountRepository.findAll()
         val account = AwesomeAccount("testUsername", "12125125",
                 "test@mail.com", "some_name", false)

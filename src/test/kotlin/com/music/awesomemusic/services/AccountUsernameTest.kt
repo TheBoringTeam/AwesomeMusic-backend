@@ -2,6 +2,7 @@ package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.repositories.IAccountRepository
+import com.music.awesomemusic.repositories.ITokenRepository
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -23,11 +24,14 @@ class AccountUsernameTest {
     @Autowired
     lateinit var accountRepository: IAccountRepository
 
+    @Autowired
+    lateinit var tokenRepository: ITokenRepository
+
 
     @Before
     fun init() {
+        tokenRepository.deleteAll()
         accountRepository.deleteAll()
-
     }
 
 
@@ -37,7 +41,7 @@ class AccountUsernameTest {
 
 
     @Test
-    fun shouldExistsByUsernameValid() {
+    fun `check if exists by username when user created`() {
         val account = AwesomeAccount("testUsername","12", "email","name", false )
         accountRepository.save(account)
 
@@ -45,7 +49,7 @@ class AccountUsernameTest {
     }
 
     @Test
-    fun shouldFindByUsername() {
+    fun `check if find by username when user created`() {
         val account = AwesomeAccount("testUsername","12", "email","name", false )
         accountRepository.save(account)
 
@@ -56,7 +60,7 @@ class AccountUsernameTest {
 
 
     @Test
-    fun shouldFindByUsernameWithThrowExceptionFail() {
+    fun `check if find by username throw when user created`() {
         val account = AwesomeAccount("testUsername","12", "email","name", false )
         accountRepository.save(account)
 

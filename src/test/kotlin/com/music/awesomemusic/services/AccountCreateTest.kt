@@ -3,11 +3,13 @@ package com.music.awesomemusic.services
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
+import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import junit.framework.Assert
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotSame
 import org.junit.Before
+
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.runner.RunWith
@@ -27,11 +29,15 @@ class AccountCreateTest {
     lateinit var accountRepository: IAccountRepository
 
     @Autowired
+    lateinit var tokenRepository: ITokenRepository
+
+    @Autowired
     private lateinit var tokenProvider: JwtTokenProvider
 
 
     @Before
     fun init() {
+        tokenRepository.deleteAll()
         accountRepository.deleteAll()
 
     }
@@ -44,7 +50,7 @@ class AccountCreateTest {
 
     @Test
     @Throws(Exception::class)
-    fun shouldSignInToReturnToken() {
+    fun `check if create account in returns token when user is correct`() {
 
         val account = accountService.createAccount(AccountSignUpForm("test4", "1234", "emailTest4", false))
 
@@ -56,7 +62,7 @@ class AccountCreateTest {
 
 
     @Test
-    fun shouldDatabaseUniqueValues() {
+    fun `check if database unique values when create user`() {
         val allAccounts = accountRepository.findAll()
         val account = AwesomeAccount("testUsername", "12125125",
                 "test@mail.com", "some_name", false)
@@ -70,7 +76,7 @@ class AccountCreateTest {
     }
 
     @Test
-    fun shouldCreateAccountValid() {
+    fun `check if create account when user is correct`() {
         val userRegistrationForm = AccountSignUpForm("testUser6", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 
@@ -79,7 +85,7 @@ class AccountCreateTest {
     }
 
     @Test
-    fun shouldEncoderPasswordForAccount() {
+    fun `check if encoder password when user created`() {
         val userRegistrationForm = AccountSignUpForm("testUser6", "12", "email", false)
         val user = accountService.createAccount(userRegistrationForm)
 

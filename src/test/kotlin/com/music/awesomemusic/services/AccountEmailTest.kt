@@ -6,6 +6,7 @@ import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.repositories.ITokenRepository
 import junit.framework.Assert.assertEquals
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -39,6 +40,13 @@ class AccountEmailTest {
 
     }
 
+    @After
+    fun after() {
+        tokenRepository.deleteAll()
+        accountRepository.deleteAll()
+
+    }
+
 
     @Test
     fun contextLoads() {
@@ -46,7 +54,7 @@ class AccountEmailTest {
 
 
     @Test
-    fun shouldCreateEmailVerificationTokenValid() {
+    fun `check if create email verification token when user created`() {
         val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
@@ -59,7 +67,7 @@ class AccountEmailTest {
 
 
     @Test
-    fun shouldGetVerificationTokenValid() {
+    fun `check if get verification token when user created`() {
         val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
@@ -70,7 +78,7 @@ class AccountEmailTest {
     }
 
     @Test
-    fun shouldExistsByEmailValid() {
+    fun `check if exists email when user created`() {
         val account = AwesomeAccount("testUsername", "12", "email", "name", false)
         accountRepository.save(account)
 
