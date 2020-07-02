@@ -1,25 +1,22 @@
-package com.music.awesomemusic.services
+/*package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
 import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
-import junit.framework.Assert
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotSame
-import org.junit.Before
-
-import org.junit.Test
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
+
 
 
 @SpringBootTest
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 class AccountCreateTest {
 
     @Autowired
@@ -35,7 +32,7 @@ class AccountCreateTest {
     private lateinit var tokenProvider: JwtTokenProvider
 
 
-    @Before
+    @BeforeEach
     fun init() {
         tokenRepository.deleteAll()
         accountRepository.deleteAll()
@@ -57,7 +54,7 @@ class AccountCreateTest {
         val authorities = arrayListOf<String>()
         val token = tokenProvider.createToken(account.username, authorities)
 
-        Assert.assertNotNull(token)
+       assertNotNull(token)
     }
 
 
@@ -94,3 +91,4 @@ class AccountCreateTest {
 }
 
 
+*/

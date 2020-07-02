@@ -7,28 +7,31 @@ import com.music.awesomemusic.repositories.ITokenRepository
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
-import org.junit.After
-import org.junit.Before
+
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+//import org.junit.After
+//import org.junit.Before
 
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
+import org.junit.jupiter.api.extension.ExtendWith
+//import org.junit.runner.RunWith
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.*
-import org.springframework.test.context.junit4.SpringRunner
+//import org.springframework.test.context.junit4.SpringRunner
 
 import org.springframework.boot.context.properties.NestedConfigurationProperty
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AccountControllerTest {
     @LocalServerPort
@@ -49,23 +52,11 @@ class AccountControllerTest {
     @Autowired
     private lateinit var tokenRepository: ITokenRepository
 
-    @After
+    @AfterEach
     fun deleteAccount() {
         tokenRepository.deleteAll()
         accountRepository.deleteAll()
     }
-
-
-    @Test
-    fun contextLoads() {
-    }
-
-    @Test
-    fun ksks() {
-
-    }
-
-
 
 
     @Nested

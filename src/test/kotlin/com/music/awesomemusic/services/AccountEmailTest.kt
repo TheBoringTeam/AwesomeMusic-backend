@@ -1,3 +1,4 @@
+/*
 package com.music.awesomemusic.services
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
@@ -5,19 +6,23 @@ import com.music.awesomemusic.persistence.domain.TokenType
 import com.music.awesomemusic.persistence.domain.VerificationToken
 import com.music.awesomemusic.repositories.IAccountRepository
 import com.music.awesomemusic.repositories.ITokenRepository
-import junit.framework.Assert.assertEquals
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+
+
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit4.SpringRunner
 
 
 @SpringBootTest
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 class AccountEmailTest {
 
     @Autowired
@@ -33,14 +38,14 @@ class AccountEmailTest {
     lateinit var tokenRepository: ITokenRepository
 
 
-    @Before
+    @BeforeEach
     fun init() {
         tokenRepository.deleteAll()
         accountRepository.deleteAll()
 
     }
 
-    @After
+    @AfterEach
     fun after() {
         tokenRepository.deleteAll()
         accountRepository.deleteAll()
@@ -87,3 +92,4 @@ class AccountEmailTest {
 }
 
 
+*/
