@@ -43,8 +43,10 @@ dependencies {
     implementation("org.springframework.security.oauth:spring-security-oauth2:2.4.0.RELEASE")
 
     //Test
-    implementation("org.springframework.boot:spring-boot-starter-test:2.1.6.RELEASE")
-    implementation("org.junit.jupiter:junit-jupiter-engine:5.7.0-M1")
+    implementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testCompile("org.junit.jupiter:junit-jupiter-params:5.2.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 
     //Security
     implementation("org.springframework.boot:spring-boot-starter-security")

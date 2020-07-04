@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 import java.io.Serializable
 import javax.servlet.http.HttpServletRequest
 
+
 @Service
 class AccountUserDetailsService : UserDetailsService, Serializable {
     private val _logger = Logger.getLogger(AccountUserDetailsService::class.java)
@@ -32,8 +33,10 @@ class AccountUserDetailsService : UserDetailsService, Serializable {
         if (username.isEmpty()) {
             throw UsernameNotFoundException("Username is empty")
         }
+        val userIp = getClientIP()
 
-        if (loginAttemptService.isBlocked(getClientIP())) {
+        _logger.debug("User trying to log in with ip: [$userIp]")
+        if (loginAttemptService.isBlocked(userIp)) {
             throw TooManyAttemptsException("Too many unsuccessful attempts to log in. Please try later")
         }
 

@@ -2,7 +2,7 @@ package com.music.awesomemusic.utils.listeners
 
 import com.music.awesomemusic.services.AccountService
 import com.music.awesomemusic.services.TokenService
-import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
+import com.music.awesomemusic.utils.events.OnPasswordResetEvent
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class RegistrationListener : ApplicationListener<OnRegistrationCompleteEvent> {
+class PasswordResetListener : ApplicationListener<OnPasswordResetEvent> {
 
-    private val _logger = Logger.getLogger(RegistrationListener::class.java)
+    private val _logger = Logger.getLogger(PasswordResetListener::class.java)
 
     @Autowired
     lateinit var accountService: AccountService
@@ -39,33 +39,32 @@ class RegistrationListener : ApplicationListener<OnRegistrationCompleteEvent> {
     @Value("\${server.port}")
     lateinit var port: String
 
-
-    override fun onApplicationEvent(event: OnRegistrationCompleteEvent) {
-        this.confirmRegistration(event)
+    override fun onApplicationEvent(event: OnPasswordResetEvent) {
+        sendPasswordResetEmail(event)
     }
 
-    private fun confirmRegistration(event: OnRegistrationCompleteEvent) {
+    fun sendPasswordResetEmail(event: OnPasswordResetEvent) {
         val account = event.account
         val token = UUID.randomUUID().toString()
-        tokenService.createEmailVerificationToken(account, token)
+        tokenService.createPasswordResetToken(account, token)
 
         val recipientAddress = account.email
 
-        val subject = "AwesomeMusic - Email Confirmation"
-        val confUrl = "http://$ip:$port/api/user/registrationConfirm?token=$token"
+        val subject = "AwesomeMusic - Password Reset"
 
-        // TODO : Handle different languages
-        var message = messages.getMessage("message.regSucc", null, "You registered successfully." +
-                " We will send you a confirmation message to your email account.", event.locale)
+        // TODO: Here should be link to frontend
+        val messageUrl = "http://redirect.to.front?token=${token}"
+
+        var message = messages.getMessage("message.resetPassword", null, null, event.locale)
 
         requireNotNull(message) {
-            _logger.error("Message email properties returned null message content!")
-            throw NullPointerException("Registration message is null")
+            _logger.error("Message account properties returned null message content!")
+            throw NullPointerException("Reset password message is null")
         }
 
         message = message.replace("%nickname%", account.username)
         message = message.replace("%service_name%", "AweMusic")
-        message = message.replace("%activation_link%", confUrl)
+        message = message.replace("%change_password_button%", messageUrl)
 
         val email = SimpleMailMessage()
         email.setTo(recipientAddress)
@@ -75,5 +74,4 @@ class RegistrationListener : ApplicationListener<OnRegistrationCompleteEvent> {
 
         sender.send(email)
     }
-
 }

@@ -23,7 +23,7 @@ class JwtTokenProvider {
     @Value("\${security.jwt.token.secret-key}")
     private lateinit var secretKey: String
 
-    @Value("\${security.jwt.token.expire-length:}")
+    @Value("\${security.jwt.token.expire-length}")
     private var validityInMilliseconds: Long = 3600000 * 24 * 7 // 3600000 - 1h
 
     @Autowired
@@ -38,7 +38,7 @@ class JwtTokenProvider {
         val claims = Jwts.claims().setSubject(username)
         claims["roles"] = roles
         val now = Date()
-        val validity = Date(now.getTime() + validityInMilliseconds)
+        val validity = Date(now.time + validityInMilliseconds)
         return Jwts.builder() //
                 .setClaims(claims) //
                 .setIssuedAt(now) //

@@ -2,13 +2,17 @@ package com.music.awesomemusic.controllers
 
 
 import com.music.awesomemusic.persistence.domain.AwesomeAccount
-import com.music.awesomemusic.persistence.dto.request.AccountLoginForm
-import com.music.awesomemusic.persistence.dto.request.AccountSignUpForm
+import com.music.awesomemusic.persistence.domain.VerificationToken
+import com.music.awesomemusic.persistence.dto.request.*
+import com.music.awesomemusic.persistence.dto.response.BadRequestResponse
+import com.music.awesomemusic.persistence.dto.response.BasicStringResponse
 import com.music.awesomemusic.security.tokens.JwtTokenProvider
 import com.music.awesomemusic.services.AccountService
+import com.music.awesomemusic.services.TokenService
+import com.music.awesomemusic.utils.events.OnPasswordResetEvent
+import com.music.awesomemusic.utils.events.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.exceptions.basic.ResourceNotFoundException
 import com.music.awesomemusic.utils.exceptions.basic.WrongArgumentsException
-import com.music.awesomemusic.utils.listeners.OnRegistrationCompleteEvent
 import com.music.awesomemusic.utils.other.ResponseBuilderMap
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +29,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
@@ -46,6 +49,9 @@ class AccountController {
     lateinit var accountService: AccountService
 
     @Autowired
+    lateinit var tokenService: TokenService
+
+    @Autowired
     lateinit var messages: MessageSource
 
     @Autowired
@@ -62,6 +68,7 @@ class AccountController {
     }
 
     @PostMapping("/registration")
+    @ResponseBody
     fun register(@Valid @RequestBody accountSignUpForm: AccountSignUpForm, bindingResult: BindingResult,
                  request: HttpServletRequest): ResponseEntity<*> {
         _logger.debug("Start register process")
@@ -77,10 +84,11 @@ class AccountController {
         // send registration mail via event
         applicationEventPublisher.publishEvent(OnRegistrationCompleteEvent(account, request.locale, request.contextPath))
 
-        return ResponseEntity<String>(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED).body(BasicStringResponse("Account was successfully created"))
     }
 
     @PostMapping("/sign-in")
+    @ResponseBody
     fun signIn(@RequestBody(required = true) @Valid accountLoginForm: AccountLoginForm, bindingResult: BindingResult): ResponseEntity<*> {
         _logger.debug("Start sign in process")
 
@@ -110,6 +118,7 @@ class AccountController {
     }
 
     @GetMapping("/me")
+    @ResponseBody
     fun me(@AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
         val account = accountService.findByUsername(userDetails.username)
 
@@ -121,24 +130,23 @@ class AccountController {
                 .toJSON()
     }
 
-    @GetMapping("/registrationConfirm")
+    @GetMapping("/registration-confirm")
+    @ResponseBody
     fun registrationConfirm(@RequestParam("token") token: String, request: WebRequest): ResponseEntity<*> {
         val locale = request.locale
+        val verificationToken: VerificationToken
 
-        val verificationToken = accountService.getVerificationToken(token)
-
-        if (verificationToken == null) {
+        try {
+            verificationToken = tokenService.getEmailVerificationToken(token)
+        } catch (e: ResourceNotFoundException) { // if token is not present in database
             val message = messages.getMessage("auth.message.invalid", null, locale)
-
             // TODO : Redirect to front end
             return ResponseEntity<String>(message, HttpStatus.OK)
         }
 
         val account = verificationToken.account
 
-        val cal = Calendar.getInstance()
-
-        if (verificationToken.expiryDate.time - cal.time.time <= 0) {
+        if (tokenService.isTokenExpired(verificationToken)) { // if token is expired
             val message = messages.getMessage("auth.message.expired", null, locale)
             // TODO : Redirect to front end
             return ResponseEntity<String>(message, HttpStatus.OK)
@@ -148,6 +156,85 @@ class AccountController {
         accountService.saveAccount(account)
 
         // TODO: Redirect to front-end
-        return ResponseEntity<String>("Here should be redirect to frontend", HttpStatus.OK)
+        return ResponseEntity.ok(BasicStringResponse("Here should be redirect to frontend"))
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseBody
+    fun resetPassword(@RequestBody(required = true) @Valid resetPasswordForm: ResetPasswordForm, bindingResult: BindingResult,
+                      request: HttpServletRequest): ResponseEntity<*> {
+        //form validation
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        val account = accountService.findByEmail(resetPasswordForm.email)
+
+        applicationEventPublisher.publishEvent(OnPasswordResetEvent(account, request.locale, request.contextPath))
+        return ResponseEntity.ok(BasicStringResponse("Reset password order was accepted"))
+    }
+
+    @PostMapping("/reset-password-confirm")
+    @ResponseBody
+    fun confirmResetPassword(@RequestBody @Valid resetPasswordConfirmForm: ResetPasswordConfirmForm, bindingResult: BindingResult,
+                             request: HttpServletRequest): ResponseEntity<*> {
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        val verificationToken: VerificationToken
+        try {
+            verificationToken = tokenService.getResetPasswordToken(resetPasswordConfirmForm.token)
+        } catch (e: ResourceNotFoundException) { // if token is not present in database
+            val message = messages.getMessage("auth.message.invalid", null, request.locale)
+            // TODO : Redirect to front end
+            return ResponseEntity<String>(message, HttpStatus.OK)
+        }
+
+        val account = verificationToken.account
+        if (tokenService.isTokenExpired(verificationToken)) { // if token is expired
+            val message = messages.getMessage("auth.message.expired", null, request.locale)
+            // TODO : Redirect to front end
+            return ResponseEntity<String>(message, HttpStatus.OK)
+        }
+
+        accountService.setPassword(account, resetPasswordConfirmForm.password)
+        tokenService.delete(verificationToken)
+        return ResponseEntity.ok(BasicStringResponse("Password was successfully reset"))
+    }
+
+    @PutMapping("/change-password")
+    @ResponseBody
+    fun changePassword(@RequestBody(required = true) @Valid changePasswordForm: ChangePasswordForm, bindingResult: BindingResult,
+                       request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
+        //form validation
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        val account = accountService.findByUsername(userDetails.username)
+        if (!accountService.isPasswordEquals(changePasswordForm.oldPassword, account)) {
+            return ResponseEntity.badRequest().body(BadRequestResponse("Old password is not correct", request.servletPath))
+        }
+
+        accountService.setPassword(account, changePasswordForm.newPassword)
+
+        return ResponseEntity.ok().body(BasicStringResponse("Password was successfully changed"))
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    fun updateAccount(@RequestBody @Valid updateAccountForm: UpdateAccountForm, bindingResult: BindingResult,
+                      request: HttpServletRequest, @AuthenticationPrincipal userDetails: UserDetails): ResponseEntity<*> {
+        //form validation
+        if (bindingResult.hasErrors()) {
+            throw WrongArgumentsException(bindingResult.allErrors[0].defaultMessage)
+        }
+
+        // update account
+        val account = accountService.findByUsername(userDetails.username)
+        accountService.updateAll(updateAccountForm, account)
+
+        return ResponseEntity.ok(BasicStringResponse("Account was successfully update"))
     }
 }

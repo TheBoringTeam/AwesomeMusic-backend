@@ -15,8 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 
 @Configuration
@@ -36,12 +37,15 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun corsConfigurer(): WebMvcConfigurer {
-        return object : WebMvcConfigurer {
-            override fun addCorsMappings(registry: CorsRegistry) {
-                registry.addMapping("/**")
-            }
-        }
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("*")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+        configuration.allowedHeaders = listOf("authorization", "content-type", "x-auth-token")
+        configuration.exposedHeaders = listOf("x-auth-token")
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 
 
@@ -58,10 +62,11 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers("/api/user/registration", "/", "/api/user/registrationConfirm").permitAll()
-                .antMatchers("/api/user/sign-in").permitAll()
+                .antMatchers("/api/user/registration", "/", "/api/user/registration-confirm").permitAll()
+                .antMatchers("/api/user/sign-in", "/api/user/reset-password", "/api/user/reset-password-confirm").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .cors().and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
